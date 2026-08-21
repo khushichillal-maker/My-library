@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Library 📚</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700&display=swap');
+body{font-family:'Plus Jakarta Sans', sans-serif; background:#FFF8E7}
+</style>
+</head>
+<body class="min-h-screen p-4">
+<div id="app" class="max-w-6xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-[#3C2A21]">My Library 📚</h1>
+    <label class="px-5 py-3 bg-[#3C2A21] text-white rounded-full text-sm cursor-pointer">
+      + Add PDF
+      <input type="file" id="pdfInput" accept=".pdf" hidden>
+    </label>
+  </div>
+
+  <div class="flex gap-2 mb-6">
+    <button onclick="filterBooks('All')" class="filter-btn px-4 py-2 rounded-full bg-[#3C2A21] text-white text-sm">All</button>
+    <button onclick="filterBooks('Reading')" class="filter-btn px-4 py-2 rounded-full bg-white border text-sm">Reading</button>
+    <button onclick="filterBooks('Completed')" class="filter-btn px-4 py-2 rounded-full bg-white border text-sm">Completed</button>
+  </div>
+
+  <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+  <p id="empty" class="text-center mt-20 opacity-40 hidden">No books yet. Upload your first PDF 👆</p>
+</div>
+
+<div id="reader" class="fixed inset-0 bg-[#121212] hidden flex-col z-50">
+  <div class="flex justify-between items-center p-3 bg-black text-white">
+    <button onclick="closeReader()" class="px-4 py-2 bg-white/10 rounded-full text-sm">← Back</button>
+    <span id="readerTitle" class="font-bold text-sm truncate mx-2"></span>
+    <div class="flex items-center gap-2">
+      <button onclick="changePage(-1)" class="px-3 py-1 bg-white/10 rounded">-</button>
+      <span id="pageInfo" class="text-xs">1 / 1</span>
+      <button onclick="changePage(1)" class="px-3 py-1 bg-[#ff8a65] rounded">+</button>
+    </div>
+  </div>
+  <iframe id="pdfFrame" class="flex-1 w-full bg-white"></iframe>
+  <div class="p-3 bg-[#1e1e1e] flex gap-2">
+    <div class="flex-1 h-2 bg-white/10 rounded-full mt-2"><div id="progressBar" class="h-2 bg-[#ff8a65] rounded-full" style="width:0%"></div></div>
+    <button onclick="markCompleted()" class="px-4 py-2 bg-green-600 text-white rounded-full text-xs">Complete ✓</button>
+  </div>
+</div>
+
+<script>
+let books = JSON.parse(localStorage.getItem('my-books-html') || '[]');
+let currentFilter = 'All';
+let currentBook = null;
+let currentPage = 1;
+let pdfBlobUrl = null;
+
+const grid = document.getElementById('grid');
+const empty = document.getElementById('empty');
+const pdfInput = document.getElementById('pdfInput');
+
+pdfInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 50*1024*1024) { alert('Too big! Use under 50MB'); return; }
+  const base64 = await toBase64(file);
+  const newBook = {
+    id: Date.now().toString(),
+    title: file.name.replace('.pdf',''),
+    pages: 100,
+    currentPage: 1,
+    status: 'Reading',
+    pdf: base64
+  };
+  books.unshift(newBook);
+  saveAndRender();
+});
+
+function saveAndRender(){
+  localStorage.setItem('my-books-html', JSON.stringify(books));
+  render();
+}
+
+function render(){
+  const filtered = currentFilter==='All'? books : books.filter(b=>b.status===currentFilter);
+  grid.innerHTML = '';
+  if(filtered.length===0){ empty.classList.remove('hidden'); } else { empty.classList.add('hidden'); }
+  filtered.forEach(book=>{
+    const pct = Math.round((book.currentPage/book.pages)*100);
+    grid.innerHTML += `
+      <div onclick="openReader('${book.id}')" class="bg-white p-3 rounded-2xl shadow-sm cursor-pointer">
+        <div class="aspect-[3/4] bg-[#3C2A21] rounded-xl flex items-center justify-center text-4xl mb-3">📄</div>
+        <h3 class="font-bold text-sm truncate">${book.title}</h3>
+        <div class="w-full h-1 bg-black/10 rounded-full mt-2"><div class="h-1 bg-[#ff8a65] rounded-full" style="width:${pct}%"></div></div>
+        <p class="text-[10px] opacity-50 mt-1">${book.currentPage}/${book.pages} • ${book.status}</p>
+      </div>
+    `;
+  });
+}
+
+function filterBooks(f){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>{ b.className='filter-btn px-4 py-2 rounded-full bg-white border text-sm'; if(b.textContent===f) b.className='filter-btn px-4 py-2 rounded-full bg-[#3C2A21] text-white text-sm'; });
+  render();
+}
+
+function openReader(id){
+  currentBook = books.find(b=>b.id===id);
+  currentPage = currentBook.currentPage;
+  const blob = dataURLtoBlob(currentBook.pdf);
+  if(pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+  pdfBlobUrl = URL.createObjectURL(blob);
+  document.getElementById('pdfFrame').src = pdfBlobUrl + '#page=' + currentPage;
+  document.getElementById('readerTitle').innerText = currentBook.title;
+  document.getElementById('reader').classList.remove('hidden');
+  document.getElementById('reader').classList.add('flex');
+  updatePageInfo();
+}
+
+function closeReader(){
+  if(pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+  document.getElementById('reader').classList.add('hidden');
+  saveAndRender();
+}
+
+function changePage(d){
+  currentPage = Math.max(1, currentPage + d);
+  currentBook.currentPage = currentPage;
+  if(currentPage > currentBook.pages) currentBook.pages = currentPage;
+  document.getElementById('pdfFrame').src = pdfBlobUrl + '#page=' + currentPage;
+  saveAndRender();
+  updatePageInfo();
+}
+
+function updatePageInfo(){
+  document.getElementById('pageInfo').innerText = currentPage + ' / ' + currentBook.pages;
+  document.getElementById('progressBar').style.width = ((currentPage/currentBook.pages)*100) + '%';
+}
+
+function markCompleted(){
+  currentBook.status='Completed';
+  closeReader();
+}
+
+function toBase64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.readAsDataURL(file); r.onload=()=>res(r.result); r.onerror=rej; }); }
+function dataURLtoBlob(dataurl){ const arr=dataurl.split(','); const mime=arr[0].match(/:(.*?);/)[1]; const bstr=atob(arr[1]); let n=bstr.length; const u8arr=new Uint8Array(n); while(n--) u8arr[n]=bstr.charCodeAt(n); return new Blob([u8arr],{type:mime}); }
+
+render();
+</script>
+</body>
+</html>
