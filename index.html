@@ -1,44 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Story • 1GB Library</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Story • 1GB Vault</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-body{font-family:'Inter',sans-serif;background:#CFCAC1}
+body{font-family:'Inter',sans-serif; background:#CFCAC1}
 .serif{font-family:'Instrument Serif',serif}
+.book-shadow{box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)}
 .no-scrollbar::-webkit-scrollbar{display:none}
 </style>
 </head>
-<body class="min-h-screen p-2 md:p-4">
-<div class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[24px] min-h-[92vh] overflow-hidden">
+<body class="min-h-screen p-2 md:p-6">
+<div class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[24px] md:rounded-[32px] min-h-[90vh] flex overflow-hidden border border-black/5">
 
-<div class="flex justify-between items-center p-6 border-b border-black/5">
+<div class="w-[72px] border-r border-black/5 flex flex-col items-center py-6 gap-6 hidden md:flex">
+<div class="w-9 h-9 rounded-full border border-black flex items-center justify-center font-bold">✋</div>
+<div class="flex flex-col gap-5 mt-10">
+<button class="w-10 h-10 rounded-full bg-[#FAF6F0] flex items-center justify-center">⌂</button>
+<button class="w-10 h-10 rounded-full bg-[#FF4D4D] text-white flex items-center justify-center">◫</button>
+<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">◷</button>
+<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">♡</button>
+<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">⚙</button>
+</div>
+<div class="mt-auto w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">≡</div>
+</div>
+
+<div class="flex-1">
+<div class="flex justify-between items-center p-6 md:p-8 border-b border-black/5">
+<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[280px]">
+<span class="opacity-40">⌕</span>
+<input id="searchInput" placeholder="Search your vault..." class="bg-transparent outline-none text-[13px] w-full">
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right"><p class="text-[11px] opacity-60" id="storageInfo">0 MB / 1024 MB</p><p class="text-[13px] font-medium">Your 1GB Vault</p></div>
+<label class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center cursor-pointer text-xl">+<input type="file" id="pdfInput" accept=".pdf" hidden></label>
+</div>
+</div>
+
+<div class="p-6 md:p-10">
+<div class="flex flex-col md:flex-row justify-between gap-8">
+<div class="md:w-[45%]">
+<h1 class="serif text-[42px] leading-[0.9] tracking-tight">Keep the story<br>going..</h1>
+<p class="text-[13px] opacity-60 mt-4 leading-relaxed max-w-[320px]">Your books are now saved on the web forever. Upload any MB, any PDF - it stays in your 1GB vault.</p>
+<button onclick="document.getElementById('pdfInput').click()" class="mt-6 px-5 py-2.5 bg-[#121212] text-white rounded-full text-[13px] flex items-center gap-2">Upload Book ↗</button>
+</div>
+<div class="md:w-[45%] flex gap-3">
+<img src="https://i.pravatar.cc/100?img=8" class="w-10 h-10 rounded-full h-fit">
 <div>
-<h1 class="serif text-2xl">STORY • 1GB VAULT</h1>
-<p class="text-[11px] opacity-60 mt-1" id="info">Loading storage...</p>
+<p class="font-medium text-[14px]">Your Cloud Library</p><p class="text-[11px] opacity-50 -mt-1">1GB • Supabase</p>
+<p class="text-[12px] leading-relaxed mt-3 opacity-70">Upload PDFs of any size. They are stored directly on the web - open your site anytime and all your books will be there.</p>
 </div>
-<label class="px-5 py-2.5 bg-[#121212] text-white rounded-full text-[13px] cursor-pointer hover:bg-[#FF4D4D]">
-+ Upload PDF
-<input type="file" id="pdfInput" accept=".pdf" hidden>
-</label>
+</div>
 </div>
 
-<div class="p-6">
-<div id="bookRow" class="flex gap-5 overflow-x-auto no-scrollbar pb-6"></div>
-<div id="empty" class="hidden text-center mt-20"><p class="text-5xl">📚</p><p class="serif text-2xl mt-4">Your 1GB vault is empty</p><p class="text-xs opacity-50 mt-2">Upload - saved forever on web for everyone</p></div>
+<div class="mt-10 relative">
+<div class="flex justify-between items-center mb-4">
+<div class="flex gap-2">
+<div class="w-8 h-8 rounded-full border flex items-center justify-center text-xs">←</div>
+<div class="w-8 h-8 rounded-full border flex items-center justify-center text-xs">→</div>
+</div>
+<p class="text-[11px] opacity-40"><span id="countDisplay" class="text-[#FF4D4D] font-bold">00</span> / <span id="totalDisplay">1024</span> MB vault</p>
+</div>
+<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-6"></div>
+<div id="empty" class="hidden mt-10 p-10 border-2 border-dashed rounded-[16px] text-center"><p class="serif text-xl">Vault empty</p><p class="text-xs opacity-50 mt-2">Upload any MB PDF - saved on web forever</p></div>
+<p class="text-[12px] mt-6 opacity-60">◎ Your books are stored at <span class="text-[#FF4D4D]">tfxorxxpureczrkagceo.supabase.co</span> - 1GB free forever.</p>
+</div>
+</div>
+</div>
 </div>
 
+<div id="detailPage" class="fixed inset-0 bg-[#FFFEF8] z-[100] hidden overflow-y-auto">
+<div class="max-w-[1280px] mx-auto min-h-screen">
+<div class="p-6 flex justify-between"><button onclick="closeDetail()" class="w-10 h-10 rounded-full border flex items-center justify-center">←</button><div class="flex gap-2"><button onclick="deleteBook()" class="px-4 py-2 bg-red-500 text-white rounded-full text-xs">Delete</button><button onclick="openPdfReader()" class="px-5 py-2 bg-black text-white rounded-full text-sm">Open Book ↗</button></div></div>
+<div class="px-6 md:px-20 grid md:grid-cols-2 gap-10">
+<div class="flex justify-center"><div id="detailCover" class="w-[280px] h-[400px] bg-black text-white p-6 flex flex-col justify-between book-shadow rounded-sm"></div></div>
+<div>
+<h1 id="detailTitle" class="serif text-[36px] leading-none"></h1>
+<p id="detailAuthor" class="font-bold mt-3 text-sm"></p>
+<p class="text-[13px] opacity-60 mt-4">Stored in your 1GB cloud vault. Read anytime from anywhere.</p>
+<button onclick="openPdfReader()" class="mt-6 px-5 py-2 bg-black text-white rounded-full text-sm">Start reading ↗</button>
+</div>
+</div>
+</div>
 </div>
 
-<div id="reader" class="fixed inset-0 bg-black hidden flex-col z-[100]">
-<div class="flex justify-between items-center p-3 text-white bg-black">
-<button onclick="document.getElementById('reader').classList.add('hidden')" class="px-4 py-2 bg-white/10 rounded-full text-xs">✕ Close</button>
-<span id="rTitle" class="text-xs truncate max-w-[50%]"></span>
-<button onclick="deleteBook()" class="px-3 py-1 bg-red-500 rounded-full text-xs">Delete</button>
-</div>
+<div id="reader" class="fixed inset-0 bg-[#0a0a0a] hidden flex-col z-[200]">
+<div class="flex justify-between items-center p-3 bg-black text-white"><button onclick="closeReader()" class="px-4 py-2 bg-white/10 rounded-full text-xs">✕ Close</button><span id="readerTitle" class="text-xs truncate"></span><span id="pageInfo" class="text-xs opacity-50"></span></div>
 <iframe id="pdfFrame" class="flex-1 w-full bg-white"></iframe>
 </div>
 
@@ -47,67 +98,74 @@ const SUPABASE_URL = 'https://tfxorxxpureczrkagceo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_omleBBag-h_xdc9eViE0JQ_NYdo03HU';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let curName='';
+let allBooks=[]; let curBook=null; let curUrl='';
 
 document.getElementById('pdfInput').addEventListener('change', async e=>{
- const file=e.target.files[0]; if(!file) return;
- if(file.size > 100*1024*1024){ alert('Max 100MB per PDF'); return; }
- const cleanName=Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9.-]/g,'_');
- document.getElementById('info').innerText='Uploading...';
- const {error}=await supabaseClient.storage.from('books').upload(cleanName,file);
- if(error){ alert('Upload failed: '+error.message); loadBooks(); return; }
+ const f=e.target.files[0]; if(!f) return;
+ if(f.size > 150*1024*1024){ alert('Max 150MB per file, but you can upload many!'); return; }
+ document.getElementById('storageInfo').innerText='Uploading...';
+ const name=Date.now()+'_'+f.name.replace(/[^a-zA-Z0-9.-]/g,'_');
+ const {error}=await supabaseClient.storage.from('books').upload(name,f);
+ if(error){ alert(error.message); loadBooks(); return; }
  loadBooks();
 });
 
 async function loadBooks(){
  const {data,error}=await supabaseClient.storage.from('books').list('',{limit:100, sortBy:{column:'created_at',order:'desc'}});
- if(error){ document.getElementById('info').innerText='Error: '+error.message; return; }
+ if(error){ console.log(error); return; }
+ allBooks=data.filter(b=>b.name!=='.emptyFolderPlaceholder');
+ let total=0; allBooks.forEach(b=> total+=(b.metadata?.size||0));
+ document.getElementById('storageInfo').innerText=`${(total/1024/1024).toFixed(1)} MB / 1024 MB used`;
+ document.getElementById('countDisplay').innerText=String(allBooks.length).padStart(2,'0');
+ render();
+}
 
- let total=0;
- (data||[]).forEach(b=> total+=(b.metadata?.size||0));
- const used=(total/1024/1024).toFixed(1);
- const left=(1024-used).toFixed(1);
- document.getElementById('info').innerText=`${used} MB used / 1024 MB • ${left} MB left • ${data.length} books`;
-
- const row=document.getElementById('bookRow');
- const empty=document.getElementById('empty');
+function render(){
+ const q=(document.getElementById('searchInput').value||'').toLowerCase();
+ const row=document.getElementById('bookRow'); const empty=document.getElementById('empty');
+ let filtered=allBooks.filter(b=> b.name.toLowerCase().includes(q));
  row.innerHTML='';
- if(!data || data.length===0){ empty.classList.remove('hidden'); return; }
+ if(filtered.length===0){ empty.classList.remove('hidden'); if(allBooks.length>0) empty.innerHTML=`<p class="text-sm">No results</p>`; return; }
  empty.classList.add('hidden');
-
- data.forEach(b=>{
-  if(b.name=='.emptyFolderPlaceholder') return;
+ filtered.forEach(b=>{
   const {data:urlData}=supabaseClient.storage.from('books').getPublicUrl(b.name);
-  const title=b.name.replace(/^[0-9]+_/,'').replace('.pdf','').slice(0,40);
+  const title=b.name.replace(/^[0-9]+_/,'').replace('.pdf','').slice(0,30);
   const size=((b.metadata?.size||0)/1024/1024).toFixed(1);
   row.innerHTML+=`
-  <div onclick="openR('${urlData.publicUrl}','${b.name}')" class="min-w-[170px] cursor-pointer group">
-    <div class="w-[170px] h-[240px] bg-[#121212] rounded-[12px] shadow-xl group-hover:-translate-y-1 transition flex flex-col justify-between p-4">
+  <div onclick="openDetail('${b.name}')" class="min-w-[180px] cursor-pointer group">
+    <div class="w-[180px] h-[260px] rounded-[4px] overflow-hidden bg-[#121212] p-4 flex flex-col justify-between book-shadow group-hover:-translate-y-2 transition-all duration-500">
       <span class="text-[9px] bg-white text-black px-2 py-1 rounded-full w-fit font-bold">${size} MB</span>
-      <div>
-        <p class="text-white font-bold leading-tight text-[15px]">${title}</p>
-        <p class="text-white/40 text-[10px] mt-2">PDF • Tap to read</p>
-      </div>
+      <p class="text-white font-bold leading-tight text-[14px] break-words">${title}</p>
     </div>
-    <p class="text-[12px] font-medium mt-3 truncate w-[170px]">${title}</p>
+    <p class="text-[13px] font-medium mt-3 truncate w-[180px]">${title}</p>
+    <p class="text-[11px] opacity-50">${size} MB • Cloud</p>
   </div>`;
  });
 }
 
-function openR(url,name){
- curName=name;
- document.getElementById('pdfFrame').src=url;
- document.getElementById('rTitle').innerText=name.replace(/^[0-9]+_/,'');
- document.getElementById('reader').classList.remove('hidden');
- document.getElementById('reader').classList.add('flex');
+function openDetail(name){
+ curBook=allBooks.find(b=>b.name===name);
+ const {data:urlData}=supabaseClient.storage.from('books').getPublicUrl(name);
+ curUrl=urlData.publicUrl;
+ document.getElementById('detailTitle').innerText=name.replace(/^[0-9]+_/,'').replace('.pdf','');
+ document.getElementById('detailAuthor').innerText=`${((curBook.metadata?.size||0)/1024/1024).toFixed(1)} MB • Stored on Web`;
+ document.getElementById('detailCover').innerHTML=`<span class="text-[9px] bg-white text-black px-2 py-1 rounded-full w-fit">${((curBook.metadata?.size||0)/1024/1024).toFixed(1)} MB</span><p class="font-bold text-lg leading-tight">${name.replace(/^[0-9]+_/,'').slice(0,60)}</p>`;
+ document.getElementById('detailPage').classList.remove('hidden');
 }
+function closeDetail(){ document.getElementById('detailPage').classList.add('hidden'); }
+function openPdfReader(){
+ document.getElementById('pdfFrame').src=curUrl;
+ document.getElementById('readerTitle').innerText=curBook.name.replace(/^[0-9]+_/,'');
+ document.getElementById('pageInfo').innerText=`${((curBook.metadata?.size||0)/1024/1024).toFixed(1)} MB`;
+ document.getElementById('reader').classList.remove('hidden'); document.getElementById('reader').classList.add('flex');
+}
+function closeReader(){ document.getElementById('reader').classList.add('hidden'); }
 async function deleteBook(){
- if(!confirm('Delete this PDF permanently from web?')) return;
- await supabaseClient.storage.from('books').remove([curName]);
- document.getElementById('reader').classList.add('hidden');
- loadBooks();
+ if(!confirm('Delete from 1GB vault permanently?')) return;
+ await supabaseClient.storage.from('books').remove([curBook.name]);
+ closeDetail(); loadBooks();
 }
-
+document.getElementById('searchInput').addEventListener('input', render);
 loadBooks();
 </script>
 </body>
