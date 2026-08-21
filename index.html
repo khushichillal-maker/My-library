@@ -3,156 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi ning • Library</title>
+<title>Mi ning — Library</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-body{font-family:'Inter',sans-serif; background:#CFCAC1}
+body{font-family:'Inter',sans-serif; background:#CFCAC1; transition:background 0.3s}
+body.dark{background:#0e0e0e}
 .serif{font-family:'Instrument Serif',serif}
-.book-shadow{box-shadow:0 20px 40px -12px rgba(0,0,0,0.3)}
+.book-shadow{box-shadow:0 20px 40px -12px rgba(0,0,0,0.25)}
 .no-scrollbar::-webkit-scrollbar{display:none}
+.page{display:none}.page.active{display:block}
+.card-dark{background:#181818!important; color:#f5f5f5!important; border-color:rgba(255,255,255,0.08)!important}
 </style>
 </head>
-<body class="min-h-screen p-2 md:p-6">
-<div class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[32px] min-h-[90vh] flex overflow-hidden">
+<body>
+<div id="appCard" class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[28px] min-h-[92vh] overflow-hidden border border-black/5 mt-3 md:mt-6 relative">
 
-<div class="w-[72px] border-r border-black/5 hidden md:flex flex-col items-center py-6 gap-6">
-<div class="w-9 h-9 rounded-full border border-black flex items-center justify-center font-bold">M</div>
-<div class="flex flex-col gap-4 mt-8">
-<div class="w-10 h-10 rounded-full bg-[#FF4D4D] text-white flex items-center justify-center">◫</div>
-</div>
-</div>
-
-<div class="flex-1">
-<div class="flex justify-between items-center p-6 md:p-8 border-b border-black/5">
-<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[260px]">
-<span>⌕</span><input id="searchInput" placeholder="Search..." class="bg-transparent outline-none text-[13px] w-full">
+<div class="flex justify-between items-center px-6 md:px-8 py-5 border-b border-black/5">
+<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[200px] md:w-[300px]">
+<span class="opacity-30 text-[12px]">Search</span>
+<input id="searchInput" placeholder="Title, author..." class="bg-transparent outline-none text-[13px] w-full">
 </div>
 <div class="flex items-center gap-3">
-<span id="status" class="text-[11px] opacity-50"></span>
-<label class="px-5 py-2.5 bg-black text-white rounded-full text-[13px] cursor-pointer">+ Upload<input type="file" id="pdfInput" accept=".pdf" multiple hidden></label>
+<label class="px-5 py-2.5 bg-[#121212] text-white rounded-full text-[12px] cursor-pointer tracking-wide">UPLOAD<input type="file" id="pdfInput" accept=".pdf" multiple hidden></label>
+<button onclick="toggleMenu()" class="w-9 h-9 rounded-full bg-black/5 flex items-center justify-center">—<br>—</button>
 </div>
 </div>
 
-<div class="p-6 md:p-10">
+<div id="menuDrawer" class="fixed inset-0 z-[100] hidden">
+<div class="absolute inset-0 bg-black/30" onclick="toggleMenu()"></div>
+<div class="absolute right-0 top-0 h-full w-[300px] bg-[#FFFEF8] p-7 flex flex-col">
+<button onclick="toggleMenu()" class="self-end w-8 h-8 rounded-full border flex items-center justify-center text-xs">Close</button>
+<div class="mt-10"><p class="serif text-[28px] leading-none">Mi ning</p><p class="text-[11px] opacity-50 mt-1 tracking-widest">PRIVATE LIBRARY</p><p id="stats" class="text-[11px] mt-4 opacity-60">0 books</p></div>
+<div class="mt-10 flex flex-col gap-2">
+<button onclick="goPage('all');toggleMenu()" id="nav-all" class="text-left px-5 py-3 rounded-full bg-black text-white text-[13px]">All Books</button>
+<button onclick="goPage('reading');toggleMenu()" id="nav-reading" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Currently Reading</button>
+<button onclick="goPage('fav');toggleMenu()" id="nav-fav" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">My Fav</button>
+<button onclick="goPage('finished');toggleMenu()" id="nav-finished" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Finished</button>
+<div class="h-[1px] bg-black/10 my-6"></div>
+<button onclick="toggleDark()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Dark / Light</button>
+</div>
+<p class="mt-auto text-[10px] opacity-40 leading-relaxed">Swipe horizontally to browse.<br>Unlimited storage.</p>
+</div>
+</div>
+
+<div class="px-6 md:px-10 pt-8 md:pt-10">
 <div class="flex flex-col md:flex-row justify-between gap-10">
-<div class="md:w-[50%]">
-<h1 class="serif text-[44px] leading-[0.9]">Keep the story<br>going..</h1>
-<p class="text-[13.5px] opacity-60 mt-4 italic leading-relaxed max-w-[340px]">"For the disgustingly well-educated — those who read like it's a personality disorder and think like it's an art form."</p>
+<div class="md:w-[52%]">
+<h1 class="serif text-[46px] leading-[0.9] tracking-tight">Keep the story<br>going..</h1>
+<p class="text-[13px] opacity-60 mt-5 leading-relaxed max-w-[360px] italic">For the disgustingly well-educated — those who read like it is a personality disorder and think like it is an art form.</p>
 </div>
-<div class="md:w-[35%] flex gap-3">
-<img src="https://i.pravatar.cc/150?img=33" class="w-10 h-10 rounded-full"><div><p class="font-medium text-[14px]">Mi ning</p><p class="text-[11px] opacity-50">Unlimited Vault</p><p class="text-[12px] mt-2 opacity-70">Upload any size, any number. No limit.</p></div>
+<div class="md:w-[32%]"><p class="font-medium text-[14px]">Mi ning</p><p class="text-[11px] opacity-50 tracking-widest mt-1">CURATOR</p><p class="text-[12px] leading-relaxed mt-4 opacity-60">A private archive for books that make you dangerously well-read. No limits. No counts.</p></div>
+</div>
+
+<div id="page-all" class="page active mt-12">
+<div class="flex justify-between items-center mb-5"><p class="text-[11px] tracking-[0.2em] opacity-40">YOUR LIBRARY</p><div class="flex gap-2"><button onclick="scrollRow(-280)" class="w-8 h-8 rounded-full border text-xs">←</button><button onclick="scrollRow(280)" class="w-8 h-8 rounded-full border text-xs">→</button></div></div>
+<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-8 snap-x" style="scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch"></div>
+<div id="empty" class="border border-dashed border-black/15 rounded-[20px] p-12 text-center"><p class="serif text-[22px]">Your shelves are empty</p><p class="text-[11px] opacity-50 mt-2">Upload multiple books at once. Swipe to browse.</p></div>
+</div>
+
+<div id="page-reading" class="page mt-12"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6">CURRENTLY READING</p><div id="readingRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-6"></div><p id="readingEmpty" class="text-[11px] opacity-40 border border-dashed rounded-[12px] p-6">Open any book to track progress here.</p></div>
+
+<div id="page-fav" class="page mt-12"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6">MY FAV</p><div id="favRow" class="flex gap-6 flex-wrap"></div><p id="favEmpty" class="text-[11px] opacity-40 border border-dashed rounded-[12px] p-6">Mark books as favourite to save here.</p></div>
+
+<div id="page-finished" class="page mt-12"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6">FINISHED</p><div id="finishedRow" class="flex gap-6 flex-wrap"></div><p id="finishedEmpty" class="text-[11px] opacity-40 border border-dashed rounded-[12px] p-6">Completed books will appear here.</p></div>
 </div>
 </div>
 
-<div class="mt-10">
-<div class="flex justify-between mb-4">
-<p class="text-[11px] tracking-widest opacity-40">YOUR LIBRARY</p>
-<div class="flex items-center gap-3">
-<button onclick="document.getElementById('bookRow').scrollBy({left:-200,behavior:'smooth'})" class="w-7 h-7 rounded-full border flex items-center justify-center text-xs">←</button>
-<button onclick="document.getElementById('bookRow').scrollBy({left:200,behavior:'smooth'})" class="w-7 h-7 rounded-full border flex items-center justify-center text-xs">→</button>
-<span id="countDisplay" class="text-[11px] opacity-40 ml-2">0 books</span>
-</div>
-</div>
-<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-8 snap-x" style="scroll-snap-type:x mandatory"></div>
-<div id="empty" class="border-2 border-dashed border-black/10 rounded-[20px] p-12 text-center">
-<p class="serif text-2xl">No books yet</p><p id="emptyMsg" class="text-xs opacity-50 mt-2">Tap + Upload to add 1 or 3 books at once. Swipe left to see more.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
+<div id="reader" class="fixed inset-0 bg-[#0a0a0a] hidden flex-col z-[200]"><div class="flex justify-between items-center px-4 py-3 text-white border-b border-white/10"><button onclick="closeReader()" class="px-4 py-1.5 bg-white/10 rounded-full text-[11px]">CLOSE</button><span id="readerTitle" class="text-[11px] opacity-70 truncate max-w-[200px]"></span><button onclick="markFinished()" class="px-4 py-1.5 bg-white text-black rounded-full text-[11px]">FINISHED</button></div><iframe id="pdfFrame" class="flex-1 w-full bg-white"></iframe></div>
 
-<div id="reader" class="fixed inset-0 bg-black hidden flex-col z-[200]"><div class="flex justify-between p-3 text-white"><button onclick="closeReader()" class="px-4 py-1 bg-white/10 rounded-full text-xs">Close</button><span id="readerTitle" class="text-xs"></span><span></span></div><iframe id="pdfFrame" class="flex-1 bg-white"></iframe></div>
+<div id="bookMenu" class="fixed inset-0 z-[150] hidden"><div class="absolute inset-0 bg-black/30" onclick="closeBookMenu()"></div><div class="absolute bottom-0 left-0 right-0 bg-[#FFFEF8] rounded-t-[24px] p-6 max-w-[500px] mx-auto"><p id="bmTitle" class="font-medium text-[14px]"></p><p id="bmMeta" class="text-[11px] opacity-50 mt-1"></p><div class="grid grid-cols-3 gap-3 mt-6"><button onclick="toggleFav()" class="py-3 border border-black/10 rounded-full text-[11px] tracking-wide">MY FAV</button><button onclick="doDelete()" class="py-3 border border-black/10 rounded-full text-[11px] tracking-wide">DELETE</button><button onclick="openBookFromMenu()" class="py-3 bg-black text-white rounded-full text-[11px] tracking-wide">READ</button></div></div></div>
 
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-let db; let books=[];
+let db, books=[], selectedId=null, menuId=null, currentBlobUrl=null, isDark=false;
 
-function openDB(){
- return new Promise((res,rej)=>{
-  const req=indexedDB.open('mi-ning-vault',1);
-  req.onupgradeneeded=e=>{ e.target.result.createObjectStore('books',{keyPath:'id'}); };
-  req.onsuccess=e=>{ db=e.target.result; res(); };
-  req.onerror=rej;
- });
-}
-
-function saveToDB(book){
- return new Promise((res,rej)=>{
-  const tx=db.transaction('books','readwrite'); tx.objectStore('books').put(book);
-  tx.oncomplete=res; tx.onerror=rej;
- });
-}
-function loadFromDB(){
- return new Promise((res)=>{
-  const tx=db.transaction('books','readonly'); const store=tx.objectStore('books');
-  const req=store.getAll(); req.onsuccess=()=>{ books=req.result.reverse(); res(); };
- });
-}
-function deleteFromDB(id){
- return new Promise((res)=>{
-  const tx=db.transaction('books','readwrite'); tx.objectStore('books').delete(id); tx.oncomplete=res;
- });
-}
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('mi-ning-pro-v2',1); r.onupgradeneeded=e=>e.target.result.createObjectStore('books',{keyPath:'id'}); r.onsuccess=e=>{db=e.target.result;res();};});}
+function saveBook(b){return new Promise(res=>{const tx=db.transaction('books','readwrite'); tx.objectStore('books').put(b); tx.oncomplete=res;});}
+function loadBooks(){return new Promise(res=>{const tx=db.transaction('books','readonly'); const req=tx.objectStore('books').getAll(); req.onsuccess=()=>{books=req.result.reverse(); res();};});}
+function deleteDB(id){return new Promise(res=>{const tx=db.transaction('books','readwrite'); tx.objectStore('books').delete(id); tx.oncomplete=res;});}
 
 document.getElementById('pdfInput').addEventListener('change', async e=>{
  const files=Array.from(e.target.files); if(!files.length) return;
- for(let i=0;i<files.length;i++){
-  const f=files[i];
-  document.getElementById('status').innerText=`Uploading ${i+1}/${files.length}: ${f.name.slice(0,20)}`;
-  try{
-   const cover=await generateCover(f);
-   const arrayBuffer=await f.arrayBuffer();
-   const book={id:Date.now()+'_'+Math.random().toString(36).slice(2), title:f.name.replace('.pdf',''), cover:cover, data:arrayBuffer, size:f.size};
-   await saveToDB(book);
-  }catch(err){ alert('Failed: '+f.name+' - '+err.message); }
+ document.getElementById('stats').innerText=`Uploading ${files.length}...`;
+ for(const f of files){
+  const cover=await genCover(f); const buf=await f.arrayBuffer();
+  const clean=f.name.replace('.pdf','').replace(/_OceanofPDF\.com_/gi,'').replace(/_/g,' ').replace(/-/g,' ').trim();
+  await saveBook({id:Date.now()+'_'+Math.random().toString(36).slice(2), title:clean, cover, data:buf, size:f.size, status:'all', fav:false});
  }
- document.getElementById('status').innerText=`Done! ${files.length} books added`;
- await loadFromDB(); render();
- setTimeout(()=>document.getElementById('status').innerText='',2000);
+ await loadBooks(); renderAll();
 });
 
-async function generateCover(file){
- try{
-  const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument(buf.slice(0)).promise;
-  const page=await pdf.getPage(1); const viewport=page.getViewport({scale:0.6});
-  const canvas=document.createElement('canvas'); canvas.width=viewport.width; canvas.height=viewport.height;
-  await page.render({canvasContext:canvas.getContext('2d'), viewport}).promise;
-  return canvas.toDataURL('image/jpeg',0.6);
- }catch(e){ return null; }
+async function genCover(file){
+ try{ const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument(buf.slice(0)).promise; const page=await pdf.getPage(1); const vp=page.getViewport({scale:0.5}); const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise; return c.toDataURL('image/jpeg',0.55);}catch{return null;}
 }
 
-function render(){
+function renderAll(){
  const q=(document.getElementById('searchInput').value||'').toLowerCase();
- const row=document.getElementById('bookRow'); const empty=document.getElementById('empty');
- let filtered=books.filter(b=> b.title.toLowerCase().includes(q));
- document.getElementById('countDisplay').innerText=`${filtered.length} books • swipe →`;
- row.innerHTML='';
- if(filtered.length===0){ empty.classList.toggle('hidden', books.length>0); return; }
- empty.classList.add('hidden');
- filtered.forEach(b=>{
-  const hasCover=b.cover;
-  row.innerHTML+=`<div onclick="openBook('${b.id}')" class="min-w-[160px] snap-start cursor-pointer group"><div class="w-[160px] h-[240px] rounded-[6px] overflow-hidden book-shadow group-hover:-translate-y-1 transition ${hasCover?'':'bg-black p-3 flex flex-col justify-between'}">${hasCover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<span class="text-[8px] bg-white px-2 py-1 rounded-full w-fit">PDF</span><p class="text-white text-[13px] font-bold">${b.title.slice(0,40)}</p>`}</div><p class="text-[12px] mt-2 truncate w-[160px]">${b.title}</p><p class="text-[10px] opacity-40">${(b.size/1024/1024).toFixed(1)} MB</p></div>`;
- });
+ const filtered=books.filter(b=> b.title.toLowerCase().includes(q));
+ const allRow=document.getElementById('bookRow'); allRow.innerHTML='';
+ document.getElementById('empty').style.display=filtered.length?'none':'block';
+ document.getElementById('stats').innerText=`${books.length} books — Unlimited`;
+ filtered.forEach(b=> allRow.innerHTML+=card(b));
+
+ const reading=books.filter(b=> b.status==='reading'); document.getElementById('readingRow').innerHTML=reading.map(card).join(''); document.getElementById('readingEmpty').style.display=reading.length?'none':'block';
+ const fav=books.filter(b=> b.fav); document.getElementById('favRow').innerHTML=fav.map(card).join(''); document.getElementById('favEmpty').style.display=fav.length?'none':'block';
+ const fin=books.filter(b=> b.status==='finished'); document.getElementById('finishedRow').innerHTML=fin.map(card).join(''); document.getElementById('finishedEmpty').style.display=fin.length?'none':'block';
+
+ document.querySelectorAll('[id^="nav-"]').forEach(el=>{ el.className='text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]'; });
+ const activeNav=document.getElementById('nav-'+(document.querySelector('.page.active').id.replace('page-',''))); if(activeNav) activeNav.className='text-left px-5 py-3 rounded-full bg-black text-white text-[13px]';
 }
 
-let currentBlobUrl=null;
+function card(b){
+ const cover=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-[#121212] p-4 flex flex-col justify-between"><span class="text-[8px] bg-white text-black px-2 py-1 rounded-full w-fit tracking-widest">PDF</span><p class="text-white text-[13px] leading-tight">${b.title.slice(0,50)}</p></div>`;
+ return `<div class="min-w-[160px] snap-start"><div onclick="openBook('${b.id}')" class="w-[160px] h-[230px] rounded-[8px] overflow-hidden book-shadow cursor-pointer bg-white">${cover}</div><div class="flex justify-between items-start mt-3 w-[160px]"><p class="text-[12px] font-medium truncate pr-2">${b.title}</p><button onclick="event.stopPropagation(); openMenu('${b.id}')" class="text-[12px] opacity-30">...</button></div><p class="text-[10px] opacity-40 mt-0.5">${(b.size/1024/1024).toFixed(1)} MB</p></div>`;
+}
+
+function scrollRow(x){ document.getElementById('bookRow').scrollBy({left:x, behavior:'smooth'}); }
+function goPage(p){ document.querySelectorAll('.page').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); renderAll(); }
+function toggleMenu(){ document.getElementById('menuDrawer').classList.toggle('hidden'); }
+function toggleDark(){
+ isDark=!isDark;
+ document.getElementById('appCard').classList.toggle('card-dark', isDark);
+ document.body.classList.toggle('dark', isDark);
+}
+
+function openMenu(id){ menuId=id; const b=books.find(x=>x.id===id); document.getElementById('bmTitle').innerText=b.title; document.getElementById('bmMeta').innerText=`${(b.size/1024/1024).toFixed(1)} MB`; document.getElementById('bookMenu').classList.remove('hidden'); }
+function closeBookMenu(){ document.getElementById('bookMenu').classList.add('hidden'); }
+async function toggleFav(){ const b=books.find(x=>x.id===menuId); b.fav=!b.fav; await saveBook(b); await loadBooks(); renderAll(); closeBookMenu(); }
+async function doDelete(){ if(!confirm('Delete this book?')) return; await deleteDB(menuId); await loadBooks(); renderAll(); closeBookMenu(); }
+function openBookFromMenu(){ closeBookMenu(); openBook(menuId); }
+
 function openBook(id){
- const b=books.find(x=>x.id===id); if(!b) return;
- const blob=new Blob([b.data],{type:'application/pdf'});
- if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
- currentBlobUrl=URL.createObjectURL(blob);
- document.getElementById('pdfFrame').src=currentBlobUrl;
- document.getElementById('readerTitle').innerText=b.title;
+ const b=books.find(x=>x.id===id); if(!b) return; selectedId=id; b.status='reading'; saveBook(b);
+ const blob=new Blob([b.data],{type:'application/pdf'}); if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl); currentBlobUrl=URL.createObjectURL(blob);
+ document.getElementById('pdfFrame').src=currentBlobUrl; document.getElementById('readerTitle').innerText=b.title;
  document.getElementById('reader').classList.remove('hidden'); document.getElementById('reader').classList.add('flex');
 }
-function closeReader(){ document.getElementById('reader').classList.add('hidden'); }
+function closeReader(){ document.getElementById('reader').classList.add('hidden'); renderAll(); }
+async function markFinished(){ const b=books.find(x=>x.id===selectedId); b.status='finished'; await saveBook(b); closeReader(); goPage('finished'); await loadBooks(); renderAll(); }
 
-document.getElementById('searchInput').addEventListener('input', render);
-
-(async()=>{ await openDB(); await loadFromDB(); render(); document.getElementById('emptyMsg').innerText=books.length?`You have ${books.length} books. Swipe right to left to see all.`:'Tap + Upload - select 3 books at once. Then swipe left on this row to see them.'; })();
+document.getElementById('searchInput').addEventListener('input', renderAll);
+(async()=>{ await openDB(); await loadBooks(); renderAll(); })();
 </script>
 </body>
 </html>
