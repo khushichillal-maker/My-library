@@ -6,178 +6,153 @@
 <title>Mi ning • Library</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
 body{font-family:'Inter',sans-serif; background:#CFCAC1}
 .serif{font-family:'Instrument Serif',serif}
-.book-shadow{box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.06)}
+.book-shadow{box-shadow:0 20px 40px -12px rgba(0,0,0,0.3)}
 .no-scrollbar::-webkit-scrollbar{display:none}
-.cover-text{text-shadow: 0 2px 10px rgba(0,0,0,0.5)}
 </style>
 </head>
 <body class="min-h-screen p-2 md:p-6">
-<div class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[24px] md:rounded-[32px] min-h-[90vh] flex overflow-hidden border border-black/5">
+<div class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[32px] min-h-[90vh] flex overflow-hidden">
 
-<div class="w-[72px] border-r border-black/5 flex flex-col items-center py-6 gap-6 hidden md:flex">
+<div class="w-[72px] border-r border-black/5 hidden md:flex flex-col items-center py-6 gap-6">
 <div class="w-9 h-9 rounded-full border border-black flex items-center justify-center font-bold">M</div>
-<div class="flex flex-col gap-5 mt-10">
-<button class="w-10 h-10 rounded-full bg-[#FAF6F0] flex items-center justify-center">⌂</button>
-<button class="w-10 h-10 rounded-full bg-[#FF4D4D] text-white flex items-center justify-center">◫</button>
-<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">◷</button>
-<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">♡</button>
+<div class="flex flex-col gap-4 mt-8">
+<div class="w-10 h-10 rounded-full bg-[#FF4D4D] text-white flex items-center justify-center">◫</div>
 </div>
-<div class="mt-auto w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">≡</div>
 </div>
 
 <div class="flex-1">
 <div class="flex justify-between items-center p-6 md:p-8 border-b border-black/5">
-<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[280px]">
-<span class="opacity-40">⌕</span>
-<input id="searchInput" placeholder="Search your library..." class="bg-transparent outline-none text-[13px] w-full">
+<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[260px]">
+<span>⌕</span><input id="searchInput" placeholder="Search..." class="bg-transparent outline-none text-[13px] w-full">
 </div>
 <div class="flex items-center gap-3">
-<p class="text-[12px] opacity-60 hidden md:block"><span id="countDisplay">0</span> books • Unlimited</p>
-<label class="px-5 py-2.5 bg-[#121212] text-white rounded-full text-[13px] cursor-pointer">+ Upload<input type="file" id="pdfInput" accept=".pdf" hidden></label>
+<span id="status" class="text-[11px] opacity-50"></span>
+<label class="px-5 py-2.5 bg-black text-white rounded-full text-[13px] cursor-pointer">+ Upload<input type="file" id="pdfInput" accept=".pdf" multiple hidden></label>
 </div>
 </div>
 
 <div class="p-6 md:p-10">
-<div class="flex flex-col md:flex-row justify-between gap-12">
+<div class="flex flex-col md:flex-row justify-between gap-10">
 <div class="md:w-[50%]">
-<h1 class="serif text-[46px] leading-[0.9] tracking-tight">Keep the story<br>going..</h1>
-<p class="text-[13.5px] opacity-60 mt-5 leading-relaxed max-w-[340px] font-light italic">"For the disgustingly well-educated — those who read like it's a personality disorder and think like it's an art form."</p>
-<button onclick="document.getElementById('pdfInput').click()" class="mt-7 px-5 py-2.5 bg-[#121212] text-white rounded-full text-[13px] flex items-center gap-2">Start reading ↗</button>
+<h1 class="serif text-[44px] leading-[0.9]">Keep the story<br>going..</h1>
+<p class="text-[13.5px] opacity-60 mt-4 italic leading-relaxed max-w-[340px]">"For the disgustingly well-educated — those who read like it's a personality disorder and think like it's an art form."</p>
 </div>
-<div class="md:w-[38%] flex gap-4">
-<img src="https://i.pravatar.cc/150?img=33" class="w-12 h-12 rounded-full h-fit object-cover">
-<div>
-<p class="font-medium text-[15px]">Mi ning</p><p class="text-[11px] opacity-50 -mt-1">Curator • Reader</p>
-<p class="text-[12.5px] leading-relaxed mt-3 opacity-70">A private archive for books that make you dangerously well-read. No limits, no counts — just stories.</p>
-</div>
+<div class="md:w-[35%] flex gap-3">
+<img src="https://i.pravatar.cc/150?img=33" class="w-10 h-10 rounded-full"><div><p class="font-medium text-[14px]">Mi ning</p><p class="text-[11px] opacity-50">Unlimited Vault</p><p class="text-[12px] mt-2 opacity-70">Upload any size, any number. No limit.</p></div>
 </div>
 </div>
 
-<div class="mt-12">
-<div class="flex justify-between items-center mb-5">
-<p class="text-[12px] tracking-widest opacity-40 font-medium">YOUR LIBRARY</p>
-<p class="text-[11px] opacity-40"><span id="countDisplay2" class="text-[#FF4D4D] font-bold">00</span> books • ∞ Unlimited vault</p>
+<div class="mt-10">
+<div class="flex justify-between mb-4">
+<p class="text-[11px] tracking-widest opacity-40">YOUR LIBRARY</p>
+<div class="flex items-center gap-3">
+<button onclick="document.getElementById('bookRow').scrollBy({left:-200,behavior:'smooth'})" class="w-7 h-7 rounded-full border flex items-center justify-center text-xs">←</button>
+<button onclick="document.getElementById('bookRow').scrollBy({left:200,behavior:'smooth'})" class="w-7 h-7 rounded-full border flex items-center justify-center text-xs">→</button>
+<span id="countDisplay" class="text-[11px] opacity-40 ml-2">0 books</span>
 </div>
-<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-8"></div>
-<div id="empty" class="mt-4 border-2 border-dashed border-black/10 rounded-[20px] p-12 text-center">
-<p class="serif text-[28px]">Your shelves are empty</p>
-<p class="text-[12px] opacity-50 mt-2 max-w-[300px] mx-auto">Upload any book. Any size. Forever unlimited. Covers will appear automatically.</p>
-<button onclick="document.getElementById('pdfInput').click()" class="mt-5 px-6 py-2.5 bg-black text-white rounded-full text-xs">Upload first book</button>
+</div>
+<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-8 snap-x" style="scroll-snap-type:x mandatory"></div>
+<div id="empty" class="border-2 border-dashed border-black/10 rounded-[20px] p-12 text-center">
+<p class="serif text-2xl">No books yet</p><p id="emptyMsg" class="text-xs opacity-50 mt-2">Tap + Upload to add 1 or 3 books at once. Swipe left to see more.</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 
-<div id="detailPage" class="fixed inset-0 bg-[#FFFEF8] z-[100] hidden overflow-y-auto">
-<div class="max-w-[1280px] mx-auto min-h-screen">
-<div class="p-6 flex justify-between"><button onclick="closeDetail()" class="w-10 h-10 rounded-full border flex items-center justify-center">←</button><div class="flex gap-2"><button onclick="deleteBook()" class="px-4 py-2 border rounded-full text-xs">Delete</button><button onclick="openPdfReader()" class="px-5 py-2 bg-black text-white rounded-full text-sm">Read ↗</button></div></div>
-<div class="px-6 md:px-20 grid md:grid-cols-2 gap-10 pb-20">
-<div class="flex justify-center"><canvas id="detailCoverCanvas" class="w-[320px] book-shadow rounded-[4px] bg-white"></canvas></div>
-<div>
-<h1 id="detailTitle" class="serif text-[38px] leading-none"></h1>
-<p class="text-[13px] opacity-60 mt-4">∞ Unlimited • Stored locally • Always here</p>
-<button onclick="openPdfReader()" class="mt-8 px-6 py-3 bg-black text-white rounded-full text-sm">Start reading ↗</button>
-</div>
-</div>
-</div>
-</div>
-
-<div id="reader" class="fixed inset-0 bg-[#0a0a0a] hidden flex-col z-[200]">
-<div class="flex justify-between items-center p-3 bg-black text-white"><button onclick="closeReader()" class="px-4 py-2 bg-white/10 rounded-full text-xs">✕ Close</button><span id="readerTitle" class="text-xs truncate"></span><div class="flex gap-2"><button onclick="changePage(-1)" class="px-3 py-1 bg-white/10 rounded-full">-</button><span id="pageInfo" class="text-xs py-1"></span><button onclick="changePage(1)" class="px-3 py-1 bg-white text-black rounded-full">+</button></div></div>
-<iframe id="pdfFrame" class="flex-1 w-full bg-white"></iframe>
-</div>
+<div id="reader" class="fixed inset-0 bg-black hidden flex-col z-[200]"><div class="flex justify-between p-3 text-white"><button onclick="closeReader()" class="px-4 py-1 bg-white/10 rounded-full text-xs">Close</button><span id="readerTitle" class="text-xs"></span><span></span></div><iframe id="pdfFrame" class="flex-1 bg-white"></iframe></div>
 
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-let books = JSON.parse(localStorage.getItem('mi-ning-unlimited') || '[]');
-let selectedId=null; let current=null; let blobUrl=null; let currentPage=1;
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let db; let books=[];
+
+function openDB(){
+ return new Promise((res,rej)=>{
+  const req=indexedDB.open('mi-ning-vault',1);
+  req.onupgradeneeded=e=>{ e.target.result.createObjectStore('books',{keyPath:'id'}); };
+  req.onsuccess=e=>{ db=e.target.result; res(); };
+  req.onerror=rej;
+ });
+}
+
+function saveToDB(book){
+ return new Promise((res,rej)=>{
+  const tx=db.transaction('books','readwrite'); tx.objectStore('books').put(book);
+  tx.oncomplete=res; tx.onerror=rej;
+ });
+}
+function loadFromDB(){
+ return new Promise((res)=>{
+  const tx=db.transaction('books','readonly'); const store=tx.objectStore('books');
+  const req=store.getAll(); req.onsuccess=()=>{ books=req.result.reverse(); res(); };
+ });
+}
+function deleteFromDB(id){
+ return new Promise((res)=>{
+  const tx=db.transaction('books','readwrite'); tx.objectStore('books').delete(id); tx.oncomplete=res;
+ });
+}
 
 document.getElementById('pdfInput').addEventListener('change', async e=>{
- const f=e.target.files[0]; if(!f) return;
- const id=Date.now()+'';
- document.getElementById('countDisplay').innerText='Generating cover...';
- const coverData = await generateCover(f);
- const b64 = await toBase64(f);
- books.unshift({id, title:f.name.replace('.pdf',''), cover:coverData, pdf:b64, page:1});
- localStorage.setItem('mi-ning-unlimited', JSON.stringify(books));
- render();
+ const files=Array.from(e.target.files); if(!files.length) return;
+ for(let i=0;i<files.length;i++){
+  const f=files[i];
+  document.getElementById('status').innerText=`Uploading ${i+1}/${files.length}: ${f.name.slice(0,20)}`;
+  try{
+   const cover=await generateCover(f);
+   const arrayBuffer=await f.arrayBuffer();
+   const book={id:Date.now()+'_'+Math.random().toString(36).slice(2), title:f.name.replace('.pdf',''), cover:cover, data:arrayBuffer, size:f.size};
+   await saveToDB(book);
+  }catch(err){ alert('Failed: '+f.name+' - '+err.message); }
+ }
+ document.getElementById('status').innerText=`Done! ${files.length} books added`;
+ await loadFromDB(); render();
+ setTimeout(()=>document.getElementById('status').innerText='',2000);
 });
 
 async function generateCover(file){
  try{
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-  const page = await pdf.getPage(1);
-  const viewport = page.getViewport({scale: 0.8});
-  const canvas = document.createElement('canvas');
-  canvas.width = viewport.width; canvas.height = viewport.height;
-  const ctx = canvas.getContext('2d');
-  await page.render({canvasContext:ctx, viewport}).promise;
-  return canvas.toDataURL('image/jpeg', 0.7);
- }catch(e){
-  return null;
- }
+  const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument(buf.slice(0)).promise;
+  const page=await pdf.getPage(1); const viewport=page.getViewport({scale:0.6});
+  const canvas=document.createElement('canvas'); canvas.width=viewport.width; canvas.height=viewport.height;
+  await page.render({canvasContext:canvas.getContext('2d'), viewport}).promise;
+  return canvas.toDataURL('image/jpeg',0.6);
+ }catch(e){ return null; }
 }
 
 function render(){
  const q=(document.getElementById('searchInput').value||'').toLowerCase();
  const row=document.getElementById('bookRow'); const empty=document.getElementById('empty');
  let filtered=books.filter(b=> b.title.toLowerCase().includes(q));
- document.getElementById('countDisplay').innerText=`${books.length}`;
- document.getElementById('countDisplay2').innerText=String(filtered.length).padStart(2,'0');
+ document.getElementById('countDisplay').innerText=`${filtered.length} books • swipe →`;
  row.innerHTML='';
- if(filtered.length===0){ empty.classList.toggle('hidden', books.length>0); if(books.length===0) empty.classList.remove('hidden'); return; }
+ if(filtered.length===0){ empty.classList.toggle('hidden', books.length>0); return; }
  empty.classList.add('hidden');
  filtered.forEach(b=>{
-  const hasCover = b.cover && b.cover.startsWith('data:image');
-  row.innerHTML+=`
-  <div onclick="openDetail('${b.id}')" class="min-w-[180px] cursor-pointer group">
-    <div class="w-[180px] h-[270px] rounded-[6px] overflow-hidden book-shadow group-hover:-translate-y-2 transition-all duration-500 ${hasCover? '' : 'bg-[#121212] p-4 flex flex-col justify-between'}">
-      ${hasCover? `<img src="${b.cover}" class="w-full h-full object-cover">` : `<span class="text-[9px] bg-white text-black px-2 py-1 rounded-full w-fit font-bold">PDF</span><p class="text-white font-bold leading-tight text-[15px] cover-text break-words">${b.title.slice(0,60)}</p>`}
-    </div>
-    <p class="text-[13px] font-medium mt-3 truncate w-[180px]">${b.title}</p>
-    <p class="text-[11px] opacity-50">Mi ning • Unlimited</p>
-  </div>`;
+  const hasCover=b.cover;
+  row.innerHTML+=`<div onclick="openBook('${b.id}')" class="min-w-[160px] snap-start cursor-pointer group"><div class="w-[160px] h-[240px] rounded-[6px] overflow-hidden book-shadow group-hover:-translate-y-1 transition ${hasCover?'':'bg-black p-3 flex flex-col justify-between'}">${hasCover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<span class="text-[8px] bg-white px-2 py-1 rounded-full w-fit">PDF</span><p class="text-white text-[13px] font-bold">${b.title.slice(0,40)}</p>`}</div><p class="text-[12px] mt-2 truncate w-[160px]">${b.title}</p><p class="text-[10px] opacity-40">${(b.size/1024/1024).toFixed(1)} MB</p></div>`;
  });
 }
 
-function openDetail(id){
- selectedId=id; current=books.find(b=>b.id===id);
- document.getElementById('detailTitle').innerText=current.title;
- const canvas=document.getElementById('detailCoverCanvas');
- if(current.cover){
-  const img=new Image(); img.onload=()=>{
-   canvas.width=img.width; canvas.height=img.height;
-   canvas.getContext('2d').drawImage(img,0,0);
-  }; img.src=current.cover;
- } else {
-  canvas.width=320; canvas.height=450;
-  const ctx=canvas.getContext('2d'); ctx.fillStyle='#121212'; ctx.fillRect(0,0,320,450);
-  ctx.fillStyle='white'; ctx.font='bold 18px Inter'; ctx.fillText(current.title.slice(0,30),20,400);
- }
- document.getElementById('detailPage').classList.remove('hidden');
-}
-function closeDetail(){ document.getElementById('detailPage').classList.add('hidden'); }
-function openPdfReader(){
- const b=books.find(x=>x.id===selectedId); current=b; currentPage=b.page||1;
- const blob=dataURLtoBlob(b.pdf); if(blobUrl) URL.revokeObjectURL(blobUrl); blobUrl=URL.createObjectURL(blob);
- document.getElementById('pdfFrame').src=blobUrl+'#page='+currentPage;
+let currentBlobUrl=null;
+function openBook(id){
+ const b=books.find(x=>x.id===id); if(!b) return;
+ const blob=new Blob([b.data],{type:'application/pdf'});
+ if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+ currentBlobUrl=URL.createObjectURL(blob);
+ document.getElementById('pdfFrame').src=currentBlobUrl;
  document.getElementById('readerTitle').innerText=b.title;
- document.getElementById('pageInfo').innerText=currentPage;
  document.getElementById('reader').classList.remove('hidden'); document.getElementById('reader').classList.add('flex');
 }
-function closeReader(){ if(current){current.page=currentPage; localStorage.setItem('mi-ning-unlimited',JSON.stringify(books));} document.getElementById('reader').classList.add('hidden'); render(); }
-function changePage(d){ currentPage=Math.max(1,currentPage+d); document.getElementById('pdfFrame').src=blobUrl+'#page='+currentPage; document.getElementById('pageInfo').innerText=currentPage; }
-function deleteBook(){ if(!confirm('Delete forever?')) return; books=books.filter(b=>b.id!==selectedId); localStorage.setItem('mi-ning-unlimited',JSON.stringify(books)); closeDetail(); render(); }
+function closeReader(){ document.getElementById('reader').classList.add('hidden'); }
+
 document.getElementById('searchInput').addEventListener('input', render);
-function toBase64(f){return new Promise((r,j)=>{const rd=new FileReader();rd.readAsDataURL(f);rd.onload=()=>r(rd.result);rd.onerror=j;})}
-function dataURLtoBlob(d){const a=d.split(',');const m=a[0].match(/:(.*?);/)[1];const b=atob(a[1]);let n=b.length;const u=new Uint8Array(n);while(n--)u[n]=b.charCodeAt(n);return new Blob([u],{type:m});}
-render();
+
+(async()=>{ await openDB(); await loadFromDB(); render(); document.getElementById('emptyMsg').innerText=books.length?`You have ${books.length} books. Swipe right to left to see all.`:'Tap + Upload - select 3 books at once. Then swipe left on this row to see them.'; })();
 </script>
 </body>
 </html>
