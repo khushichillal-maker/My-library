@@ -1,149 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Library 📚</title>
+<title>Story • Library</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700&display=swap');
-body{font-family:'Plus Jakarta Sans', sans-serif; background:#FFF8E7}
+body{font-family:'Inter',sans-serif; background:#CFCAC1}
+.serif{font-family:'Instrument Serif',serif}
+.book-shadow{box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)}
+.no-scrollbar::-webkit-scrollbar{display:none}
 </style>
 </head>
-<body class="min-h-screen p-4">
-<div id="app" class="max-w-6xl mx-auto">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-[#3C2A21]">My Library 📚</h1>
-    <label class="px-5 py-3 bg-[#3C2A21] text-white rounded-full text-sm cursor-pointer">
-      + Add PDF
-      <input type="file" id="pdfInput" accept=".pdf" hidden>
-    </label>
-  </div>
+<body class="min-h-screen p-2 md:p-6">
+<div class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[24px] md:rounded-[32px] min-h-[90vh] flex overflow-hidden border border-black/5">
 
-  <div class="flex gap-2 mb-6">
-    <button onclick="filterBooks('All')" class="filter-btn px-4 py-2 rounded-full bg-[#3C2A21] text-white text-sm">All</button>
-    <button onclick="filterBooks('Reading')" class="filter-btn px-4 py-2 rounded-full bg-white border text-sm">Reading</button>
-    <button onclick="filterBooks('Completed')" class="filter-btn px-4 py-2 rounded-full bg-white border text-sm">Completed</button>
-  </div>
-
-  <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-  <p id="empty" class="text-center mt-20 opacity-40 hidden">No books yet. Upload your first PDF 👆</p>
+<!-- SIDEBAR - like screenshot -->
+<div class="w-[72px] border-r border-black/5 flex flex-col items-center py-6 gap-6 hidden md:flex">
+<div class="w-9 h-9 rounded-full border border-black flex items-center justify-center font-bold">✋</div>
+<div class="flex flex-col gap-5 mt-10">
+<button class="w-10 h-10 rounded-full bg-[#FAF6F0] flex items-center justify-center">⌂</button>
+<button class="w-10 h-10 rounded-full bg-[#FF4D4D] text-white flex items-center justify-center">◫</button>
+<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">◷</button>
+<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">♡</button>
+<button class="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center">⚙</button>
+</div>
+<div class="mt-auto w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">≡</div>
 </div>
 
-<div id="reader" class="fixed inset-0 bg-[#121212] hidden flex-col z-50">
-  <div class="flex justify-between items-center p-3 bg-black text-white">
-    <button onclick="closeReader()" class="px-4 py-2 bg-white/10 rounded-full text-sm">← Back</button>
-    <span id="readerTitle" class="font-bold text-sm truncate mx-2"></span>
-    <div class="flex items-center gap-2">
-      <button onclick="changePage(-1)" class="px-3 py-1 bg-white/10 rounded">-</button>
-      <span id="pageInfo" class="text-xs">1 / 1</span>
-      <button onclick="changePage(1)" class="px-3 py-1 bg-[#ff8a65] rounded">+</button>
-    </div>
-  </div>
-  <iframe id="pdfFrame" class="flex-1 w-full bg-white"></iframe>
-  <div class="p-3 bg-[#1e1e1e] flex gap-2">
-    <div class="flex-1 h-2 bg-white/10 rounded-full mt-2"><div id="progressBar" class="h-2 bg-[#ff8a65] rounded-full" style="width:0%"></div></div>
-    <button onclick="markCompleted()" class="px-4 py-2 bg-green-600 text-white rounded-full text-xs">Complete ✓</button>
-  </div>
+<!-- MAIN -->
+<div class="flex-1">
+<!-- TOP BAR -->
+<div class="flex justify-between items-center p-6 md:p-8 border-b border-black/5">
+<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[280px]">
+<span class="opacity-40">⌕</span>
+<input id="searchInput" placeholder="Search book name, author, edition..." class="bg-transparent outline-none text-[13px] w-full">
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden md:block"><p class="text-[13px] font-medium">Alexander Mark</p></div>
+<img src="https://i.pravatar.cc/100?img=12" class="w-8 h-8 rounded-full">
+<span class="opacity-40">🔔</span>
+</div>
+</div>
+
+<!-- HERO like screenshot 1 -->
+<div class="p-6 md:p-10">
+<div class="flex flex-col md:flex-row justify-between gap-8">
+<div class="md:w-[45%]">
+<h1 class="serif text-[42px] leading-[0.9] tracking-tight">Keep the story<br>going..</h1>
+<p class="text-[13px] opacity-60 mt-4 leading-relaxed max-w-[320px]">Don't let the story end just yet. Continue reading your last book and immerse yourself in the world of literature.</p>
+<button onclick="document.getElementById('pdfInput').click()" class="mt-6 px-5 py-2.5 bg-[#121212] text-white rounded-full text-[13px] flex items-center gap-2">Start reading ↗</button>
+<input type="file" id="pdfInput" accept=".pdf" hidden>
+</div>
+<div class="md:w-[45%] flex gap-3">
+<img id="authorAvatar" src="https://i.pravatar.cc/100?img=8" class="w-10 h-10 rounded-full h-fit">
+<div>
+<p class="font-medium text-[14px]">George RR Martin</p><p class="text-[11px] opacity-50 -mt-1">Author</p>
+<p class="text-[12px] leading-relaxed mt-3 opacity-70">"Fire and Blood" tells the story of the Targaryen dynasty in Westeros, chronicling the conquest of the Seven Kingdoms by House Targaryen. It also covers the Targaryen civil war known as the Dance of the Dragons.</p>
+</div>
+</div>
+</div>
+
+<!-- BOOK ROW - like screenshot -->
+<div class="mt-10 relative">
+<div class="flex justify-between items-center mb-4">
+<div class="flex gap-2">
+<div class="w-8 h-8 rounded-full border flex items-center justify-center text-xs">←</div>
+<div class="w-8 h-8 rounded-full border flex items-center justify-center text-xs">→</div>
+</div>
+<p class="text-[11px] opacity-40"><span id="countDisplay" class="text-[#FF4D4D] font-bold">04</span> / <span id="totalDisplay">60</span> books</p>
+</div>
+
+<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-6">
+<!-- Books injected by JS -->
+</div>
+
+<p class="text-[12px] mt-6 opacity-60">◎ Got chance to check out the <span class="text-[#FF4D4D] underline">new collection</span> of Harry Potter? It's a must-read for any fan of the series, don't miss out!</p>
+</div>
+</div>
+</div>
+
+<!-- BOOK DETAIL MODAL - like screenshot 2 -->
+<div id="detailPage" class="fixed inset-0 bg-[#FFFEF8] z-[100] hidden overflow-y-auto">
+<div class="max-w-[1280px] mx-auto min-h-screen">
+<div class="p-6 flex justify-between"><button onclick="closeDetail()" class="w-10 h-10 rounded-full border flex items-center justify-center">←</button><button onclick="openPdfReader()" class="px-5 py-2 bg-black text-white rounded-full text-sm">Open Book ↗</button></div>
+<div class="px-6 md:px-20 grid md:grid-cols-2 gap-10">
+<div class="flex justify-center"><img id="detailCover" class="w-[280px] h-[400px] object-cover book-shadow rounded-sm"></div>
+<div>
+<h1 id="detailTitle" class="serif text-[36px] leading-none"></h1>
+<p id="detailAuthor" class="font-bold mt-3 text-sm"></p>
+<p class="text-[13px] opacity-60 mt-4 max-w-[400px]">Get ready to uncover the dark secrets and betrayals in the book. A thrilling adventure awaits you.</p>
+<button onclick="openPdfReader()" class="mt-6 px-5 py-2 bg-black text-white rounded-full text-sm">Start reading ↗</button>
+<div class="mt-10 grid grid-cols-3 gap-6 text-[12px]">
+<div><p class="font-bold">Description</p><p class="opacity-60 mt-2 leading-relaxed">The story takes place during Harry's sixth year at Hogwarts...</p></div>
+<div><p class="font-bold">Editors</p><p class="opacity-60 mt-2">J.K. Rowling (author), Christopher...</p></div>
+<div><p class="font-bold">Language</p><p class="opacity-60 mt-2">Standard English (USA & UK)</p></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PDF READER -->
+<div id="reader" class="fixed inset-0 bg-[#0a0a0a] hidden flex-col z-[200]">
+<div class="flex justify-between items-center p-3 bg-black text-white"><button onclick="closeReader()" class="px-4 py-2 bg-white/10 rounded-full text-xs">✕ Close</button><span id="readerTitle" class="text-xs"></span><div class="flex gap-2"><button onclick="changePage(-1)" class="px-3 py-1 bg-white/10 rounded-full">-</button><span id="pageInfo" class="text-xs py-1"></span><button onclick="changePage(1)" class="px-3 py-1 bg-white text-black rounded-full">+</button></div></div>
+<iframe id="pdfFrame" class="flex-1 w-full bg-white"></iframe>
 </div>
 
 <script>
-let books = JSON.parse(localStorage.getItem('my-books-html') || '[]');
-let currentFilter = 'All';
-let currentBook = null;
-let currentPage = 1;
-let pdfBlobUrl = null;
+let books = JSON.parse(localStorage.getItem('aesthetic-lib') || '[]');
+let current=null; let currentPage=1; let blobUrl=null; let selectedId=null;
+const defaultCovers = [
+ 'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=400',
+ 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400',
+ 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
+ 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400'
+];
 
-const grid = document.getElementById('grid');
-const empty = document.getElementById('empty');
-const pdfInput = document.getElementById('pdfInput');
-
-pdfInput.addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if(!file) return;
-  if(file.size > 50*1024*1024) { alert('Too big! Use under 50MB'); return; }
-  const base64 = await toBase64(file);
-  const newBook = {
-    id: Date.now().toString(),
-    title: file.name.replace('.pdf',''),
-    pages: 100,
-    currentPage: 1,
-    status: 'Reading',
-    pdf: base64
-  };
-  books.unshift(newBook);
-  saveAndRender();
+document.getElementById('pdfInput').addEventListener('change', async e=>{
+ const f=e.target.files[0]; if(!f) return;
+ const b64=await toBase64(f);
+ books.unshift({id:Date.now()+'',title:f.name.replace('.pdf',''),author:'You',cover:defaultCovers[Math.floor(Math.random()*4)],pdf:b64,page:1,total:100,status:'Reading'});
+ localStorage.setItem('aesthetic-lib',JSON.stringify(books)); render();
 });
 
-function saveAndRender(){
-  localStorage.setItem('my-books-html', JSON.stringify(books));
-  render();
+function render(filter=''){
+ const row=document.getElementById('bookRow');
+ const q=document.getElementById('searchInput').value.toLowerCase();
+ let filtered=books.filter(b=>b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+ document.getElementById('countDisplay').innerText=String(filtered.length).padStart(2,'0');
+ document.getElementById('totalDisplay').innerText=books.length;
+ row.innerHTML='';
+ if(books.length===0){
+  row.innerHTML=`<div onclick="document.getElementById('pdfInput').click()" class="min-w-[180px] h-[260px] border-2 border-dashed rounded-[16px] flex flex-col items-center justify-center cursor-pointer"><span class="text-3xl">+</span><p class="text-xs mt-2">Add your first book</p></div>`;
+  return;
+ }
+ filtered.forEach(b=>{
+  row.innerHTML+=`
+  <div onclick="openDetail('${b.id}')" class="min-w-[180px] cursor-pointer group">
+    <div class="w-[180px] h-[260px] rounded-[4px] overflow-hidden book-shadow group-hover:-translate-y-2 transition-all duration-500">
+      <img src="${b.cover}" class="w-full h-full object-cover">
+    </div>
+    <p class="text-[13px] font-medium mt-3 truncate w-[180px]">${b.title}</p>
+    <p class="text-[11px] opacity-50">${b.author}</p>
+  </div>`;
+ });
 }
-
-function render(){
-  const filtered = currentFilter==='All'? books : books.filter(b=>b.status===currentFilter);
-  grid.innerHTML = '';
-  if(filtered.length===0){ empty.classList.remove('hidden'); } else { empty.classList.add('hidden'); }
-  filtered.forEach(book=>{
-    const pct = Math.round((book.currentPage/book.pages)*100);
-    grid.innerHTML += `
-      <div onclick="openReader('${book.id}')" class="bg-white p-3 rounded-2xl shadow-sm cursor-pointer">
-        <div class="aspect-[3/4] bg-[#3C2A21] rounded-xl flex items-center justify-center text-4xl mb-3">📄</div>
-        <h3 class="font-bold text-sm truncate">${book.title}</h3>
-        <div class="w-full h-1 bg-black/10 rounded-full mt-2"><div class="h-1 bg-[#ff8a65] rounded-full" style="width:${pct}%"></div></div>
-        <p class="text-[10px] opacity-50 mt-1">${book.currentPage}/${book.pages} • ${book.status}</p>
-      </div>
-    `;
-  });
+function openDetail(id){
+ selectedId=id; current=books.find(b=>b.id===id);
+ document.getElementById('detailCover').src=current.cover;
+ document.getElementById('detailTitle').innerText=current.title;
+ document.getElementById('detailAuthor').innerText=current.author;
+ document.getElementById('detailPage').classList.remove('hidden');
 }
-
-function filterBooks(f){
-  currentFilter=f;
-  document.querySelectorAll('.filter-btn').forEach(b=>{ b.className='filter-btn px-4 py-2 rounded-full bg-white border text-sm'; if(b.textContent===f) b.className='filter-btn px-4 py-2 rounded-full bg-[#3C2A21] text-white text-sm'; });
-  render();
+function closeDetail(){ document.getElementById('detailPage').classList.add('hidden'); }
+function openPdfReader(){
+ const b=books.find(x=>x.id===selectedId); current=b; currentPage=b.page;
+ const blob=dataURLtoBlob(b.pdf); if(blobUrl) URL.revokeObjectURL(blobUrl); blobUrl=URL.createObjectURL(blob);
+ document.getElementById('pdfFrame').src=blobUrl+'#page='+currentPage;
+ document.getElementById('readerTitle').innerText=b.title;
+ document.getElementById('reader').classList.remove('hidden'); document.getElementById('reader').classList.add('flex');
+ updateInfo();
 }
-
-function openReader(id){
-  currentBook = books.find(b=>b.id===id);
-  currentPage = currentBook.currentPage;
-  const blob = dataURLtoBlob(currentBook.pdf);
-  if(pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
-  pdfBlobUrl = URL.createObjectURL(blob);
-  document.getElementById('pdfFrame').src = pdfBlobUrl + '#page=' + currentPage;
-  document.getElementById('readerTitle').innerText = currentBook.title;
-  document.getElementById('reader').classList.remove('hidden');
-  document.getElementById('reader').classList.add('flex');
-  updatePageInfo();
-}
-
-function closeReader(){
-  if(pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
-  document.getElementById('reader').classList.add('hidden');
-  saveAndRender();
-}
-
-function changePage(d){
-  currentPage = Math.max(1, currentPage + d);
-  currentBook.currentPage = currentPage;
-  if(currentPage > currentBook.pages) currentBook.pages = currentPage;
-  document.getElementById('pdfFrame').src = pdfBlobUrl + '#page=' + currentPage;
-  saveAndRender();
-  updatePageInfo();
-}
-
-function updatePageInfo(){
-  document.getElementById('pageInfo').innerText = currentPage + ' / ' + currentBook.pages;
-  document.getElementById('progressBar').style.width = ((currentPage/currentBook.pages)*100) + '%';
-}
-
-function markCompleted(){
-  currentBook.status='Completed';
-  closeReader();
-}
-
-function toBase64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.readAsDataURL(file); r.onload=()=>res(r.result); r.onerror=rej; }); }
-function dataURLtoBlob(dataurl){ const arr=dataurl.split(','); const mime=arr[0].match(/:(.*?);/)[1]; const bstr=atob(arr[1]); let n=bstr.length; const u8arr=new Uint8Array(n); while(n--) u8arr[n]=bstr.charCodeAt(n); return new Blob([u8arr],{type:mime}); }
-
+function closeReader(){ if(current){current.page=currentPage; localStorage.setItem('aesthetic-lib',JSON.stringify(books));} document.getElementById('reader').classList.add('hidden'); render(); }
+function changePage(d){ currentPage=Math.max(1,currentPage+d); document.getElementById('pdfFrame').src=blobUrl+'#page='+currentPage; updateInfo(); }
+function updateInfo(){ document.getElementById('pageInfo').innerText=currentPage+' / '+current.total; }
+document.getElementById('searchInput').addEventListener('input', render);
+function toBase64(f){return new Promise((r,j)=>{const rd=new FileReader();rd.readAsDataURL(f);rd.onload=()=>r(rd.result);rd.onerror=j;})}
+function dataURLtoBlob(d){const a=d.split(',');const m=a[0].match(/:(.*?);/)[1];const b=atob(a[1]);let n=b.length;const u=new Uint8Array(n);while(n--)u[n]=b.charCodeAt(n);return new Blob([u],{type:m});}
 render();
 </script>
 </body>
