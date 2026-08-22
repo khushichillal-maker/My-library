@@ -3,160 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi ning — Library</title>
+<title>Mi ning — Shared</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body{font-family:'Inter',sans-serif; background:#CFCAC1}
-.serif{font-family:'Instrument Serif',serif}
-.book-shadow{box-shadow:0 20px 40px -12px rgba(0,0,0,0.25)}
-.no-scrollbar::-webkit-scrollbar{display:none}
-.page{display:none}.page.active{display:block}
-.dark-main{background:#0f0f0f!important; color:#f1f1f1!important}
-.dark-sub{background:#1c1c1c!important}
-#loader{position:fixed;inset:0;background:rgba(255,254,248,0.95);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column}
+body{font-family:'Inter',sans-serif;background:#CFCAC1}.serif{font-family:'Instrument Serif',serif}
+.page{display:none}.page.active{display:block}.no-scrollbar::-webkit-scrollbar{display:none}
+#loader{position:fixed;inset:0;background:#FFFEF8f0;z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column}
 </style>
 </head>
 <body>
-<div id="loader"><p class="serif text-[26px]">Uploading...</p><p class="text-[11px] tracking-widest opacity-50 mt-2" id="loaderText">Please wait</p></div>
+<div id="loader"><p class="serif text-2xl">Uploading to showcase...</p><p id="loaderText" class="text-[11px] opacity-60 mt-2">Please wait</p></div>
 
-<div id="appCard" class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[28px] min-h-[92vh] overflow-hidden border border-black/5 mt-3 md:mt-6 relative">
-<div class="flex justify-between items-center px-6 md:px-8 py-5 border-b border-black/5">
-<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[200px] md:w-[300px]" id="searchWrap">
-<span class="opacity-30 text-[11px] tracking-widest">SEARCH</span>
-<input id="searchInput" placeholder="Title..." class="bg-transparent outline-none text-[13px] w-full">
-</div>
-<div class="flex items-center gap-3">
-<label class="px-5 py-2.5 bg-[#121212] text-white rounded-full text-[11px] cursor-pointer tracking-widest">UPLOAD<input type="file" id="pdfInput" accept=".pdf" multiple hidden></label>
-<button onclick="toggleMenu()" class="w-9 h-9 rounded-full bg-black/5 flex items-center justify-center">≡</button>
-</div>
+<div class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[28px] min-h-[90vh] mt-4 border overflow-hidden" id="appCard">
+<div class="flex justify-between p-6 border-b">
+<div class="bg-[#F6F3EE] px-4 py-2 rounded-full flex gap-2 items-center"><span class="text-[10px] opacity-30 tracking-widest">SEARCH</span><input id="searchInput" placeholder="Title..." class="bg-transparent outline-none text-sm w-[140px]"></div>
+<div class="flex gap-2 items-center"><label class="px-5 py-2.5 bg-black text-white rounded-full text-[10px] cursor-pointer">UPLOAD<input type="file" id="pdfInput" accept=".pdf" multiple hidden></label><button onclick="toggleMenu()" class="w-9 h-9 rounded-full bg-black/5 flex items-center justify-center text-lg">≡</button></div>
 </div>
 
-<div id="menuDrawer" class="fixed inset-0 z-[100] hidden"><div class="absolute inset-0 bg-black/40" onclick="toggleMenu()"></div>
-<div id="drawerPanel" class="absolute right-0 top-0 h-full w-[320px] bg-[#FFFEF8] p-7 flex flex-col">
-<button onclick="toggleMenu()" class="self-end w-8 h-8 rounded-full border flex items-center justify-center text-[11px]">CLOSE</button>
-<div class="mt-6 flex items-center gap-3"><img id="drawerAvatar" src="https://i.pravatar.cc/150?img=33" class="w-10 h-10 rounded-full"><div><p class="font-medium text-[13px]" id="drawerName">Mi ning</p><p class="text-[10px] opacity-50 tracking-widest">PRIVATE LIBRARY</p></div></div>
-<p id="stats" class="text-[11px] mt-4 opacity-60">0 books</p>
-<div class="mt-8 flex flex-col gap-2">
-<button onclick="goPage('all');toggleMenu()" class="text-left px-5 py-3 rounded-full bg-black text-white text-[13px]">All Books</button>
-<button onclick="goPage('reading');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Currently Reading</button>
-<button onclick="goPage('fav');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">My Fav</button>
-<button onclick="goPage('finished');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Finished</button>
-<button onclick="goPage('about');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">About Me</button>
-<div class="h-[1px] bg-black/10 my-6"></div>
-<button onclick="toggleDark()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Dark / Light</button>
-</div>
-</div></div>
+<div id="menuDrawer" class="fixed inset-0 z-[100] hidden"><div class="absolute inset-0 bg-black/40" onclick="toggleMenu()"></div><div class="absolute right-0 top-0 h-full w-[300px] bg-[#FFFEF8] p-6"><button onclick="toggleMenu()" class="float-right border rounded-full px-3 py-1 text-[10px]">CLOSE</button><p id="stats" class="mt-16 text-xs opacity-60">Loading...</p><div class="mt-6 flex flex-col gap-2"><button onclick="goPage('all');toggleMenu()" class="text-left px-5 py-3 bg-black text-white rounded-full text-sm">All Books</button><button onclick="goPage('about');toggleMenu()" class="text-left px-5 py-3 border rounded-full text-sm">About Me</button></div><p class="mt-10 text-[10px] opacity-30">If shelf empty, your crudcrud expired. Get new link from crudcrud.com</p></div></div>
 
-<div class="px-6 md:px-10 pt-8">
-<div class="flex flex-col md:flex-row justify-between gap-10"><div class="md:w-[52%]"><h1 class="serif text-[46px] leading-[0.9]">Keep the story<br>going..</h1><p class="text-[13px] opacity-60 mt-5 max-w-[360px] italic">For the disgustingly well-educated — those who read like it is a personality disorder.</p></div>
-<div class="md:w-[32%] flex gap-3"><img id="mainAvatar" src="https://i.pravatar.cc/150?img=33" class="w-12 h-12 rounded-full"><div><p class="font-medium text-[14px]" id="mainName">Mi ning</p><p class="text-[10px] opacity-50 tracking-widest">CURATOR</p><p class="text-[11px] opacity-60 mt-2" id="mainBioShort">A private archive for books.</p></div></div></div>
-
-<div id="page-all" class="page active mt-12">
-<div class="flex justify-between items-center mb-5"><p class="text-[11px] tracking-[0.2em] opacity-40">YOUR LIBRARY (SHARED)</p><div class="flex gap-2"><button onclick="scrollRow(-280)" class="w-8 h-8 rounded-full border">←</button><button onclick="scrollRow(280)" class="w-8 h-8 rounded-full border">→</button></div></div>
-<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-8"></div>
-<div id="empty" class="border border-dashed border-black/15 rounded-[20px] p-12 text-center"><p class="serif text-[22px]">Your shelves are empty</p></div>
+<div class="p-8">
+<h1 class="serif text-[42px] leading-[0.9]">Keep the story<br>going..</h1>
+<p class="text-[13px] opacity-60 mt-3 max-w-[340px] italic">Shared showcase — anyone with link sees your books</p>
+<div id="page-all" class="page active mt-10"><div id="bookRow" class="flex gap-5 overflow-x-auto no-scrollbar pb-6"></div><div id="empty" class="border border-dashed p-12 text-center rounded-[20px]"><p class="serif text-xl">Your shelves are empty</p><p class="text-[11px] opacity-50">Upload first book</p></div></div>
+<div id="page-about" class="page mt-10"><p class="serif text-2xl">Mi ning</p><p class="text-[13px] opacity-60 mt-3">Curator of dangerously well-read books.</p></div>
 </div>
-<div id="page-reading" class="page mt-12"><p class="text-[11px] opacity-40 mb-6">CURRENTLY READING</p><div id="readingRow" class="flex gap-6 overflow-x-auto no-scrollbar"></div></div>
-<div id="page-fav" class="page mt-12"><p class="text-[11px] opacity-40 mb-6">MY FAV</p><div id="favRow" class="flex gap-6 flex-wrap"></div></div>
-<div id="page-finished" class="page mt-12"><p class="text-[11px] opacity-40 mb-6">FINISHED</p><div id="finishedRow" class="flex gap-6 flex-wrap"></div></div>
-<div id="page-about" class="page mt-12">
-<p class="text-[11px] opacity-40 mb-8">ABOUT THE CURATOR</p>
-<div class="flex flex-col md:flex-row gap-8 max-w-[900px]">
-<div class="flex flex-col gap-4"><div class="relative group"><img id="aboutAvatar" src="https://i.pravatar.cc/300?img=33" class="w-[120px] h-[120px] rounded-full"><label class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 cursor-pointer">CHANGE<input type="file" id="avatarInput" accept="image/*" hidden></label></div></div>
-<div class="flex-1"><div class="flex items-center gap-3"><h2 id="aboutName" class="serif text-[36px]">Mi ning</h2><button onclick="editProfile()" class="text-[10px] border px-3 py-1 rounded-full">EDIT</button></div><p id="aboutBio" class="text-[13px] mt-6 opacity-70">I collect books that make me uncomfortable in the best way.</p><div class="mt-8"><div id="aboutLinks" class="flex flex-wrap gap-2"></div></div></div></div>
-<div id="editBox" class="hidden mt-10 p-6 border rounded-[20px] max-w-[560px]"><input id="editName" placeholder="Your name" class="w-full px-4 py-2.5 rounded-full border text-[13px] mb-3"><textarea id="editBio" class="w-full px-4 py-3 rounded-[16px] border text-[13px] h-[100px]"></textarea><textarea id="editLinks" class="w-full mt-3 px-4 py-3 rounded-[16px] border text-[12px] h-[60px]" placeholder="Instagram https://..."></textarea><div class="flex gap-2 mt-4"><button onclick="saveProfile()" class="px-6 py-2.5 bg-black text-white rounded-full text-[11px]">SAVE</button><button onclick="closeEdit()" class="px-6 py-2.5 border rounded-full text-[11px]">CANCEL</button></div></div>
 </div>
-</div></div>
 
-<div id="detailPage" class="fixed inset-0 z-[120] hidden bg-[#FFFEF8] overflow-y-auto"><div class="max-w-[1280px] mx-auto"><div class="flex justify-between items-center px-6 md:px-8 py-5 border-b"><button onclick="closeDetail()" class="px-5 py-2 rounded-full border text-[11px]">CLOSE</button><p class="text-[11px] opacity-40">BOOK DETAIL</p><div class="w-[70px]"></div></div><div class="px-6 md:px-16 py-10 flex flex-col md:flex-row gap-10"><div id="detailCover" class="w-[200px] md:w-[320px] h-[300px] md:h-[480px] rounded-[12px] overflow-hidden bg-[#eee] shrink-0 mx-auto"></div><div class="flex-1"><h2 id="detailTitle" class="serif text-[32px] md:text-[44px]"></h2><p id="detailMeta" class="text-[11px] opacity-50 mt-4"></p><div class="mt-10 grid gap-3 max-w-[320px]"><button onclick="readNative()" class="w-full py-4 bg-black text-white rounded-full text-[12px]">READ</button><div class="grid grid-cols-2 gap-3"><button onclick="toggleFavDetail()" id="detailFavBtn" class="py-3 border rounded-full text-[11px]">MY FAV</button><button onclick="markFinishedDetail()" class="py-3 border rounded-full text-[11px]">FINISHED</button></div><button onclick="deleteDetail()" class="py-3 text-[11px] opacity-40">DELETE</button></div></div></div></div></div>
+<div id="detailPage" class="fixed inset-0 hidden bg-[#FFFEF8] z-[120] p-8"><button onclick="closeDetail()" class="border rounded-full px-5 py-2 text-[11px]">CLOSE</button><h2 id="detailTitle" class="serif text-3xl mt-10"></h2><p id="detailMeta" class="text-xs opacity-50 mt-2"></p><button onclick="readNative()" class="mt-8 px-6 py-3 bg-black text-white rounded-full text-xs">READ</button><br><button onclick="deleteDetail()" class="mt-6 text-[11px] opacity-40">DELETE FOR EVERYONE</button></div>
 
 <script>
+// === REPLACE THIS WITH YOUR NEW LINK ===
+const CRUD_BASE = "REPLACE_WITH_YOUR_NEW_LINK"; // e.g. https://crudcrud.com/api/0d192b0278264add91af3b6c367dbcb8
+const BOOKS_ENDPOINT = CRUD_BASE + "/books";
+
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-const BOOKS_ENDPOINT = "https://crudcrud.com/api/0d192b0278264add91af3b6c367dbcb8/books";
+let books=[], selectedId=null;
 
-let db, books=[], selectedId=null, isDark=false, profile={name:'Mi ning', bio:'I collect books that make me uncomfortable in the best way.', links:[], avatar:'https://i.pravatar.cc/300?img=33'};
+function showLoader(t){document.getElementById('loader').style.display='flex'; document.getElementById('loaderText').innerText=t;}
+function hideLoader(){document.getElementById('loader').style.display='none';}
 
-function openDB(){return new Promise(res=>{const r=indexedDB.open('mi-ning-v5',1); r.onupgradeneeded=e=>{const d=e.target.result; if(!d.objectStoreNames.contains('profile')) d.createObjectStore('profile',{keyPath:'id'});}; r.onsuccess=e=>{db=e.target.result;res();};});}
-function saveProfileDB(){return new Promise(res=>{const tx=db.transaction('profile','readwrite'); tx.objectStore('profile').put({...profile,id:'main'}); tx.oncomplete=res;});}
-function loadProfile(){return new Promise(res=>{const tx=db.transaction('profile','readonly'); const req=tx.objectStore('profile').get('main'); req.onsuccess=()=>{if(req.result) profile=req.result; res();};});}
+async function genCover(file){
+  try{
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument(buf).promise;
+    const page=await pdf.getPage(1);
+    const vp=page.getViewport({scale:0.4});
+    const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+    await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+    return c.toDataURL('image/jpeg',0.5);
+  }catch{return null;}
+}
 
-async function genCover(file){try{const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument(buf).promise; const page=await pdf.getPage(1); const vp=page.getViewport({scale:0.4}); const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise; return c.toDataURL('image/jpeg',0.5);}catch{return null;}}
-
-async function uploadPDF(file){
-  // 0x0.st works on mobile, no CORS block
+async function uploadToTmpfiles(file){
   const fd=new FormData(); fd.append('file', file);
-  const res=await fetch('https://0x0.st', {method:'POST', body:fd});
-  if(!res.ok) throw new Error('Upload failed '+res.status);
-  const url=(await res.text()).trim();
-  return url; // like https://0x0.st/xxxx.pdf
+  const res=await fetch('https://tmpfiles.org/api/v1/upload',{method:'POST',body:fd});
+  const json=await res.json();
+  if(json.status!=='success') throw new Error('tmpfiles failed');
+  // json.data.url = https://tmpfiles.org/dl/xxxx -> direct link
+  let url=json.data.url;
+  // convert to direct dl link
+  url=url.replace('tmpfiles.org/','tmpfiles.org/dl/');
+  return url;
 }
 
 async function loadBooks(){
-  const grid=document.getElementById('bookRow');
   try{
     const res=await fetch(BOOKS_ENDPOINT);
-    if(!res.ok) throw new Error('crud expired');
+    if(!res.ok) throw new Error('expired');
     books=await res.json();
-    document.getElementById('stats').innerText=books.length+' books — Shared live';
+    document.getElementById('stats').innerText=books.length+' books — live';
     renderAll();
   }catch(e){
-    document.getElementById('stats').innerText='Crud expired — get new link from crudcrud.com';
-    document.getElementById('bookRow').innerHTML='<p class="text-[12px] opacity-60">Your crudcrud link expired. Go to crudcrud.com, copy new link, replace BOOKS_ENDPOINT in code.</p>';
+    document.getElementById('stats').innerText='API expired — get new link from crudcrud.com';
+    document.getElementById('bookRow').innerHTML=`<p class="text-xs text-red-500">Your API expired. Go to crudcrud.com, get new link, paste in code line 38, commit again.</p>`;
   }
 }
 
 document.getElementById('pdfInput').addEventListener('change', async e=>{
   const files=Array.from(e.target.files); if(!files.length) return;
-  const loader=document.getElementById('loader'); loader.style.display='flex';
+  showLoader('Generating cover...');
   for(const f of files){
     try{
-      document.getElementById('loaderText').innerText='Cover: '+f.name;
       const cover=await genCover(f);
-      document.getElementById('loaderText').innerText='Uploading PDF...';
-      const pdf_url=await uploadPDF(f);
-      document.getElementById('loaderText').innerText='Saving...';
-      const clean=f.name.replace('.pdf','').slice(0,60);
-      await fetch(BOOKS_ENDPOINT,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({title:clean, cover, pdf_url, size:f.size, status:'all', fav:false})});
-    }catch(err){ alert('Failed: '+f.name+' - '+err.message); }
+      showLoader('Uploading PDF (tmpfiles)...');
+      const pdf_url=await uploadToTmpfiles(f);
+      showLoader('Saving to shared library...');
+      const title=f.name.replace('.pdf','').slice(0,60);
+      const r=await fetch(BOOKS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,cover,pdf_url,size:f.size})});
+      if(!r.ok) throw new Error('Crud expired');
+    }catch(err){
+      alert('Upload failed: '+err.message+'\n\nIf crud expired, get new link from crudcrud.com');
+      hideLoader(); return;
+    }
   }
-  loader.style.display='none'; await loadBooks();
+  hideLoader(); await loadBooks();
 });
-
-document.getElementById('avatarInput').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=async ev=>{profile.avatar=ev.target.result; await saveProfileDB(); renderProfile();}; r.readAsDataURL(f);});
 
 function renderAll(){
   const q=(document.getElementById('searchInput').value||'').toLowerCase();
   const filtered=books.filter(b=>b.title.toLowerCase().includes(q));
-  const allRow=document.getElementById('bookRow'); allRow.innerHTML='';
+  const row=document.getElementById('bookRow'); row.innerHTML='';
   document.getElementById('empty').style.display=filtered.length?'none':'block';
-  filtered.forEach(b=>allRow.innerHTML+=card(b));
-  document.getElementById('readingRow').innerHTML=books.filter(b=>b.status==='reading').map(card).join('');
-  document.getElementById('favRow').innerHTML=books.filter(b=>b.fav).map(card).join('');
-  document.getElementById('finishedRow').innerHTML=books.filter(b=>b.status==='finished').map(card).join('');
+  filtered.forEach(b=>{
+    const id=b._id;
+    const cover=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-black text-white p-3 text-[11px]">${b.title}</div>`;
+    row.innerHTML+=`<div class="min-w-[140px]"><div onclick="openDetail('${id}')" class="w-[140px] h-[200px] rounded-[10px] overflow-hidden bg-white shadow cursor-pointer">${cover}</div><p class="text-[11px] mt-2 truncate w-[140px]">${b.title}</p><p class="text-[9px] opacity-40">${(b.size/1024/1024).toFixed(1)} MB</p></div>`;
+  });
 }
-function card(b){
-  const cover=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-black text-white p-4 flex items-end"><p class="text-[12px]">${b.title}</p></div>`;
-  const id=b._id||b.id;
-  return `<div class="min-w-[160px]"><div onclick="openDetail('${id}')" class="w-[160px] h-[230px] rounded-[8px] overflow-hidden book-shadow cursor-pointer bg-white">${cover}</div><p class="text-[12px] font-medium truncate w-[160px] mt-3">${b.title}</p><p class="text-[10px] opacity-40">${(b.size/1024/1024).toFixed(1)} MB</p></div>`;
-}
-function renderProfile(){document.getElementById('mainAvatar').src=profile.avatar; document.getElementById('drawerAvatar').src=profile.avatar; document.getElementById('aboutAvatar').src=profile.avatar; document.getElementById('mainName').innerText=profile.name; document.getElementById('drawerName').innerText=profile.name; document.getElementById('aboutName').innerText=profile.name; document.getElementById('aboutBio').innerText=profile.bio; document.getElementById('mainBioShort').innerText=profile.bio.slice(0,80); const linksDiv=document.getElementById('aboutLinks'); linksDiv.innerHTML=''; (profile.links||[]).forEach(l=>{linksDiv.innerHTML+=`<a href="${l.url}" target="_blank" class="px-4 py-2 border rounded-full text-[11px]">${l.label}</a>`;});}
-function scrollRow(x){document.getElementById('bookRow').scrollBy({left:x,behavior:'smooth'});}
-function goPage(p){document.querySelectorAll('.page').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); renderAll();}
 function toggleMenu(){document.getElementById('menuDrawer').classList.toggle('hidden');}
-function toggleDark(){isDark=!isDark; document.getElementById('appCard').classList.toggle('dark-main',isDark); document.getElementById('drawerPanel').classList.toggle('dark-main',isDark); document.getElementById('detailPage').classList.toggle('dark-main',isDark); document.getElementById('searchWrap').classList.toggle('dark-sub',isDark); document.body.style.background=isDark?'#000':'#CFCAC1';}
-function openDetail(id){selectedId=id; const b=books.find(x=>(x._id||x.id)==id); document.getElementById('detailTitle').innerText=b.title; document.getElementById('detailMeta').innerText=(b.size/1024/1024).toFixed(1)+' MB • Shared'; document.getElementById('detailCover').innerHTML=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-black text-white p-6 flex items-end">${b.title}</div>`; document.getElementById('detailFavBtn').innerText=b.fav?'REMOVE':'MY FAV'; document.getElementById('detailPage').classList.remove('hidden');}
+function goPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); document.getElementById('page-'+p).classList.add('active');}
+function openDetail(id){selectedId=id; const b=books.find(x=>x._id==id); document.getElementById('detailTitle').innerText=b.title; document.getElementById('detailMeta').innerText=(b.size/1024/1024).toFixed(1)+' MB'; document.getElementById('detailPage').classList.remove('hidden'); window._pdf=b.pdf_url;}
 function closeDetail(){document.getElementById('detailPage').classList.add('hidden');}
-function readNative(){const b=books.find(x=>(x._id||x.id)==selectedId); window.open(b.pdf_url,'_blank');}
-async function toggleFavDetail(){const b=books.find(x=>(x._id||x.id)==selectedId); b.fav=!b.fav; await fetch(BOOKS_ENDPOINT+'/'+selectedId,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}); await loadBooks(); openDetail(selectedId);}
-async function markFinishedDetail(){const b=books.find(x=>(x._id||x.id)==selectedId); b.status='finished'; await fetch(BOOKS_ENDPOINT+'/'+selectedId,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}); closeDetail(); goPage('finished'); await loadBooks();}
+function readNative(){window.open(window._pdf,'_blank');}
 async function deleteDetail(){if(!confirm('Delete for everyone?')) return; await fetch(BOOKS_ENDPOINT+'/'+selectedId,{method:'DELETE'}); closeDetail(); await loadBooks();}
-function editProfile(){document.getElementById('editBox').classList.remove('hidden'); document.getElementById('editName').value=profile.name; document.getElementById('editBio').value=profile.bio; document.getElementById('editLinks').value=(profile.links||[]).map(l=>`${l.label} ${l.url}`).join('\n');}
-function closeEdit(){document.getElementById('editBox').classList.add('hidden');}
-async function saveProfile(){profile.name=document.getElementById('editName').value||'Mi ning'; profile.bio=document.getElementById('editBio').value; const lines=document.getElementById('editLinks').value.split('\n').filter(Boolean); profile.links=lines.map(line=>{const parts=line.split(' '); const url=parts.pop(); const label=parts.join(' ')||'Link'; return {label,url};}); await saveProfileDB(); renderProfile(); closeEdit();}
 document.getElementById('searchInput').addEventListener('input',renderAll);
-(async()=>{await openDB(); await loadProfile(); renderProfile(); await loadBooks();})();
+loadBooks();
 </script>
 </body>
 </html>
