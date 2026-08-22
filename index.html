@@ -18,7 +18,6 @@
   .page { display: none; } .page.active { display: block; }
   .dark-main { background: #0a0a0a !important; color: #f3f3f3 !important; border-color: rgba(255,255,255,0.08) !important; }
   .dark-sub { background: #161616 !important; border-color: rgba(255,255,255,0.1) !important; }
-  .dark-card { background: #141414 !important; border: 1px solid rgba(255,255,255,0.08); }
 </style>
 </head>
 <body class="antialiased selection:bg-black selection:text-white">
@@ -26,13 +25,13 @@
 <div id="appCard" class="max-w-[1320px] mx-auto bg-[#FFFEF8] rounded-[32px] min-h-[94vh] overflow-hidden border border-black/5 my-3 md:my-6 relative shadow-2xl transition-colors duration-300">
 
   <!-- TOP BAR -->
-  <header class="flex justify-between items-center px-6 md:px-10 py-6 border-b border-black/5" id="topBar">
+  <header class="flex justify-between items-center px-6 md:px-10 py-6 border-b border-black/5">
     <div class="flex items-center gap-3 bg-[#F4F1EA] px-5 py-2.5 rounded-full w-[220px] md:w-[320px] border border-black/5 transition-all focus-within:border-black/20" id="searchWrap">
       <span class="opacity-30 text-[10px] tracking-[0.2em] font-medium">SEARCH</span>
       <input id="searchInput" placeholder="Search archive..." class="bg-transparent outline-none text-[13px] w-full placeholder:text-black/30">
     </div>
     <div class="flex items-center gap-4">
-      <span class="hidden md:inline-block text-[11px] tracking-widest opacity-40 uppercase">GitHub Sync Active</span>
+      <span class="hidden md:inline-block text-[11px] tracking-widest opacity-40 uppercase">Auto-Sync Active</span>
       <button onclick="toggleMenu()" class="w-10 h-10 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-[20px] transition">≡</button>
     </div>
   </header>
@@ -53,7 +52,7 @@
             <p class="text-[10px] opacity-40 tracking-widest">CURATOR ARCHIVE</p>
           </div>
         </div>
-        <p id="stats" class="text-[11px] mt-4 opacity-50 font-mono">0 cataloged items</p>
+        <p id="stats" class="text-[11px] mt-4 opacity-50 font-mono">Loading volumes...</p>
         <nav class="mt-8 flex flex-col gap-2">
           <button onclick="goPage('all');toggleMenu()" class="text-left px-5 py-3 rounded-full bg-black text-white text-[13px] transition hover:opacity-90">All Collection</button>
           <button onclick="goPage('reading');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px] transition">Currently Reading</button>
@@ -70,9 +69,7 @@
   </div>
 
   <!-- MAIN CONTENT AREA -->
-  <main class="px-6 md:px-12 pt-8 md:pt-12 pb-16" id="contentArea">
-    
-    <!-- HEADER -->
+  <main class="px-6 md:px-12 pt-8 md:pt-12 pb-16">
     <section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-10 border-b border-black/5" id="mainHeader">
       <div class="md:w-[58%]">
         <h1 class="serif text-[52px] md:text-[68px] leading-[0.88] tracking-tight">Keep the story<br><span class="italic font-normal">going...</span></h1>
@@ -88,7 +85,7 @@
       </div>
     </section>
 
-    <!-- ALL BOOKS -->
+    <!-- PAGES -->
     <div id="page-all" class="page active mt-10">
       <div class="flex justify-between items-center mb-6">
         <p class="text-[11px] tracking-[0.2em] font-medium opacity-40 uppercase">SHELVES ARCHIVE</p>
@@ -98,12 +95,12 @@
         </div>
       </div>
       <div id="bookRow" class="flex gap-7 overflow-x-auto no-scrollbar pb-8 pt-2 scroll-smooth"></div>
+      <div id="loadingNotice" class="text-center py-12 text-[13px] opacity-40 font-mono">Fetching files directly from GitHub folder...</div>
       <div id="empty" class="border border-dashed border-black/15 rounded-[24px] p-16 text-center my-6 hidden">
-        <p class="serif text-[28px] opacity-70">No titles match your search</p>
+        <p class="serif text-[28px] opacity-70">No titles found in repository</p>
       </div>
     </div>
 
-    <!-- OTHER PAGES -->
     <div id="page-reading" class="page mt-10"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6 uppercase font-medium">CURRENTLY READING</p><div id="readingRow" class="flex gap-7 overflow-x-auto no-scrollbar pb-6"></div></div>
     <div id="page-fav" class="page mt-10"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6 uppercase font-medium">FAVORITES</p><div id="favRow" class="flex gap-7 flex-wrap"></div></div>
     <div id="page-finished" class="page mt-10"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6 uppercase font-medium">FINISHED</p><div id="finishedRow" class="flex gap-7 flex-wrap"></div></div>
@@ -121,14 +118,6 @@
           <p id="aboutBio" class="text-[13px] leading-relaxed mt-4 opacity-70 whitespace-pre-line"></p>
           <div class="mt-8"><p class="text-[10px] tracking-[0.2em] opacity-40 mb-3 uppercase">Connect</p><div id="aboutLinks" class="flex flex-wrap gap-2"></div></div>
         </div>
-      </div>
-      
-      <div id="editBox" class="hidden mt-10 p-6 border border-black/10 rounded-[24px] max-w-[560px] dark-sub">
-        <p class="text-[11px] tracking-widest opacity-40 mb-4 uppercase">Edit Curator Info</p>
-        <input id="editName" placeholder="Your Name" class="w-full px-4 py-3 rounded-xl border border-black/10 text-[13px] mb-3 outline-none bg-transparent">
-        <textarea id="editBio" placeholder="Bio..." class="w-full px-4 py-3 rounded-xl border border-black/10 text-[13px] h-[120px] outline-none bg-transparent"></textarea>
-        <textarea id="editLinks" placeholder="Links (Format: Instagram https://...)" class="w-full px-4 py-3 rounded-xl border border-black/10 text-[12px] h-[80px] outline-none bg-transparent mt-2"></textarea>
-        <div class="flex gap-2 mt-4"><button onclick="saveProfile()" class="px-6 py-2.5 bg-black text-white rounded-full text-[11px] tracking-widest">SAVE</button><button onclick="closeEdit()" class="px-6 py-2.5 border rounded-full text-[11px] tracking-widest">CANCEL</button></div>
       </div>
     </div>
   </main>
@@ -162,17 +151,6 @@
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-// -------------------------------------------------------------
-// ADD YOUR GITHUB BOOKS HERE
-// Put your PDF files in a folder named "books" in your repo!
-// -------------------------------------------------------------
-const GITHUB_BOOKS = [
-  { id: "b1", title: "Crime and Punishment", file: "books/crime-and-punishment.pdf" },
-  { id: "b2", title: "The Picture of Dorian Gray", file: "books/dorian-gray.pdf" },
-  { id: "b3", title: "Beyond Good and Evil", file: "books/beyond-good-and-evil.pdf" },
-  // Add as many books as you want following this exact format!
-];
-
 let catalog = [], selectedId = null, isDark = false;
 let userStates = JSON.parse(localStorage.getItem('mining_book_states') || '{}');
 let profile = JSON.parse(localStorage.getItem('mining_profile')) || {
@@ -182,30 +160,64 @@ let profile = JSON.parse(localStorage.getItem('mining_profile')) || {
   avatar: 'https://i.pravatar.cc/300?img=33'
 };
 
-async function initLibrary() {
-  catalog = GITHUB_BOOKS.map(b => ({
-    ...b,
-    fav: userStates[b.id]?.fav || false,
-    status: userStates[b.id]?.status || 'all',
-    cover: null
-  }));
-  renderProfile();
-  renderAll();
-  
-  // Render covers dynamically from PDFs
-  for (let book of catalog) {
-    try {
-      const pdf = await pdfjsLib.getDocument(book.file).promise;
-      const page = await pdf.getPage(1);
-      const vp = page.getViewport({ scale: 0.6 });
-      const c = document.createElement('canvas');
-      c.width = vp.width; c.height = vp.height;
-      await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
-      book.cover = c.toDataURL('image/jpeg', 0.7);
+// AUTO-CLEAN MESSY FILENAMES
+function cleanTitle(filename) {
+  return filename
+    .replace('.pdf', '')
+    .replace(/_OceanofPDF\.com_/gi, '')
+    .replace(/_/g, ' ')
+    .replace(/-/g, ' ')
+    .trim();
+}
+
+// AUTO-FETCH ALL BOOKS FROM GITHUB FOLDER
+async function autoFetchGitHubBooks() {
+  const currentUrl = window.location.href;
+  const match = currentUrl.match(/github\.io\/([^/]+)/);
+  const repoOwner = window.location.hostname.split('.')[0];
+  const repoName = match ? match[1] : '';
+
+  if (!repoName) {
+    document.getElementById('loadingNotice').innerText = "Run this page on GitHub Pages to auto-sync.";
+    return;
+  }
+
+  try {
+    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/books`;
+    const response = await fetch(apiUrl);
+    const files = await response.json();
+
+    if (Array.isArray(files)) {
+      catalog = files
+        .filter(f => f.name.endsWith('.pdf'))
+        .map(f => ({
+          id: f.sha,
+          title: cleanTitle(f.name),
+          file: f.path,
+          fav: userStates[f.sha]?.fav || false,
+          status: userStates[f.sha]?.status || 'all',
+          cover: null
+        }));
+
+      document.getElementById('loadingNotice').classList.add('hidden');
       renderAll();
-    } catch(e) {
-      console.log(`Cover load skipped for ${book.title}. Displaying modern layout.`);
+
+      // Render page 1 PDF covers automatically
+      for (let book of catalog) {
+        try {
+          const pdf = await pdfjsLib.getDocument(book.file).promise;
+          const page = await pdf.getPage(1);
+          const vp = page.getViewport({ scale: 0.6 });
+          const c = document.createElement('canvas');
+          c.width = vp.width; c.height = vp.height;
+          await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+          book.cover = c.toDataURL('image/jpeg', 0.7);
+          renderAll();
+        } catch(e) {}
+      }
     }
+  } catch (err) {
+    document.getElementById('loadingNotice').innerText = "Failed to auto-fetch books folder.";
   }
 }
 
@@ -219,7 +231,7 @@ function card(b) {
   const coverHtml = b.cover 
     ? `<img src="${b.cover}" class="w-full h-full object-cover">`
     : `<div class="w-full h-full bg-[#121212] p-5 flex flex-col justify-between text-white border border-white/10">
-        <span class="text-[9px] tracking-widest opacity-40 uppercase">Publication</span>
+        <span class="text-[9px] tracking-widest opacity-40 uppercase">PDF BOOK</span>
         <p class="serif text-[18px] leading-snug">${b.title}</p>
        </div>`;
 
@@ -238,9 +250,8 @@ function renderAll() {
   const q = (document.getElementById('searchInput').value || '').toLowerCase();
   const filtered = catalog.filter(b => b.title.toLowerCase().includes(q));
   
-  const allRow = document.getElementById('bookRow');
-  allRow.innerHTML = filtered.map(card).join('');
-  document.getElementById('empty').style.display = filtered.length ? 'none' : 'block';
+  document.getElementById('bookRow').innerHTML = filtered.map(card).join('');
+  document.getElementById('empty').style.display = (filtered.length || catalog.length === 0) ? 'none' : 'block';
   document.getElementById('stats').innerText = `${catalog.length} cataloged volumes`;
   
   document.getElementById('readingRow').innerHTML = catalog.filter(b => b.status === 'reading').map(card).join('');
@@ -252,8 +263,7 @@ function openDetail(id) {
   selectedId = id;
   const b = catalog.find(x => x.id === id);
   document.getElementById('detailTitle').innerText = b.title;
-  document.getElementById('detailMeta').innerText = `PDF Format • GitHub Storage Path: ${b.file}`;
-  
+  document.getElementById('detailMeta').innerText = `PDF Format • GitHub Path: ${b.file}`;
   document.getElementById('detailCover').innerHTML = b.cover 
     ? `<img src="${b.cover}" class="w-full h-full object-cover">`
     : `<div class="w-full h-full bg-black text-white p-8 flex flex-col justify-between"><span class="text-[10px] tracking-widest opacity-40">VAULT ITEM</span><p class="serif text-[28px]">${b.title}</p></div>`;
@@ -266,30 +276,18 @@ function openDetail(id) {
   saveStates();
 }
 
-function closeDetail() {
-  document.getElementById('detailPage').classList.add('hidden');
-  renderAll();
-}
-
-function openPdfFile() {
-  const b = catalog.find(x => x.id === selectedId);
-  window.open(b.file, '_blank');
-}
+function closeDetail() { document.getElementById('detailPage').classList.add('hidden'); renderAll(); }
+function openPdfFile() { window.open(catalog.find(x => x.id === selectedId).file, '_blank'); }
 
 function toggleFavDetail() {
   const b = catalog.find(x => x.id === selectedId);
-  b.fav = !b.fav;
-  saveStates();
-  openDetail(selectedId);
-  renderAll();
+  b.fav = !b.fav; saveStates(); openDetail(selectedId); renderAll();
 }
 
 function markFinishedDetail() {
   const b = catalog.find(x => x.id === selectedId);
   b.status = b.status === 'finished' ? 'all' : 'finished';
-  saveStates();
-  openDetail(selectedId);
-  renderAll();
+  saveStates(); openDetail(selectedId); renderAll();
 }
 
 function renderProfile() {
@@ -302,33 +300,9 @@ function renderProfile() {
   document.getElementById('aboutBio').innerText = profile.bio;
   document.getElementById('mainBioShort').innerText = profile.bio.split('\n')[0];
   
-  const linksDiv = document.getElementById('aboutLinks');
-  linksDiv.innerHTML = (profile.links || []).map(l => 
+  document.getElementById('aboutLinks').innerHTML = (profile.links || []).map(l => 
     `<a href="${l.url}" target="_blank" class="px-4 py-2 border border-black/10 rounded-full text-[11px] tracking-widest hover:bg-black hover:text-white transition">${l.label}</a>`
   ).join('');
-}
-
-function editProfile() {
-  document.getElementById('editBox').classList.remove('hidden');
-  document.getElementById('editName').value = profile.name;
-  document.getElementById('editBio').value = profile.bio;
-  document.getElementById('editLinks').value = (profile.links || []).map(l => `${l.label} ${l.url}`).join('\n');
-}
-
-function closeEdit() { document.getElementById('editBox').classList.add('hidden'); }
-
-function saveProfile() {
-  profile.name = document.getElementById('editName').value || 'Mi ning';
-  profile.bio = document.getElementById('editBio').value;
-  const lines = document.getElementById('editLinks').value.split('\n').filter(Boolean);
-  profile.links = lines.map(line => {
-    const parts = line.split(' ');
-    const url = parts.pop();
-    return { label: parts.join(' ') || 'Link', url };
-  });
-  localStorage.setItem('mining_profile', JSON.stringify(profile));
-  renderProfile();
-  closeEdit();
 }
 
 function scrollRow(x) { document.getElementById('bookRow').scrollBy({ left: x, behavior: 'smooth' }); }
@@ -342,4 +316,16 @@ function toggleMenu() { document.getElementById('menuDrawer').classList.toggle('
 function toggleDark() {
   isDark = !isDark;
   document.getElementById('appCard').classList.toggle('dark-main', isDark);
-  document.getElementById('drawerPane
+  document.getElementById('drawerPanel').classList.toggle('dark-main', isDark);
+  document.getElementById('detailPage').classList.toggle('dark-main', isDark);
+  document.getElementById('searchWrap').classList.toggle('dark-sub', isDark);
+  document.body.style.background = isDark ? '#000000' : '#CFCAC1';
+  document.getElementById('themeModeLabel').innerText = isDark ? 'Dark' : 'Light';
+}
+
+document.getElementById('searchInput').addEventListener('input', renderAll);
+renderProfile();
+autoFetchGitHubBooks();
+</script>
+</body>
+</html>
