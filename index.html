@@ -1,217 +1,108 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi ning — Library</title>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mi ning - Library</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body{font-family:'Inter',sans-serif; background:#CFCAC1; transition:0.3s}
+body{font-family:'Inter',sans-serif;background:#CFCAC1}
 .serif{font-family:'Instrument Serif',serif}
-.book-shadow{box-shadow:0 20px 40px -12px rgba(0,0,0,0.25)}
+.book-shadow{box-shadow:0 20px 40px -12px rgba(0,0,0,.25)}
 .no-scrollbar::-webkit-scrollbar{display:none}
 .page{display:none}.page.active{display:block}
-.dark-main{background:#0f0f0f!important; color:#f1f1f1!important; border-color:rgba(255,255,255,0.08)!important}
-.dark-sub{background:#1c1c1c!important}
-</style>
-</head>
-<body>
-<div id="appCard" class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[28px] min-h-[92vh] overflow-hidden border border-black/5 mt-3 md:mt-6 relative">
+.dark-main{background:#0f0f0f!important;color:#f1f1f1!important}
+.footer{border-top:1px solid rgba(0,0,0,.06);padding:18px 0;margin-top:48px;display:flex;justify-content:space-between;gap:12px;font-size:10px;letter-spacing:.14em;opacity:.45}
+</style></head><body>
+<div id="appCard" class="max-w-[1280px] mx-auto bg-[#FFFEF8] rounded-[28px] min-h-[92vh] overflow-hidden border border-black/5 mt-2 md:mt-6 relative">
+<div class="flex justify-between items-center px-6 md:px-8 py-4 border-b border-black/5">
+<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[200px] md:w-[280px]"><span class="opacity-30 text-[10px] tracking-widest">SEARCH</span><input id="searchInput" placeholder="Title..." class="bg-transparent outline-none text-[12px] w-full"></div>
+<div class="flex items-center gap-2"><label class="px-5 py-2 bg-black text-white rounded-full text-[10px] tracking-widest cursor-pointer">UPLOAD<input type="file" id="pdfInput" accept=".pdf" multiple hidden></label><button onclick="toggleMenu()" class="w-8 h-8 rounded-full bg-black/5">≡</button></div>
+</div>
+<div id="menuDrawer" class="fixed inset-0 z-[100] hidden"><div class="absolute inset-0 bg-black/40" onclick="toggleMenu()"></div>
+<div id="drawerPanel" class="absolute right-0 top-0 h-full w-[300px] bg-[#FFFEF8] p-6 flex flex-col">
+<button onclick="toggleMenu()" class="self-end w-7 h-7 rounded-full border text-[10px]">CLOSE</button>
+<div class="mt-5 flex items-center gap-3"><img id="drawerAvatar" src="" class="w-9 h-9 rounded-full object-cover"><div><p id="drawerName" class="font-medium text-[12px]">Mi ning</p><p class="text-[9px] opacity-50 tracking-widest">PRIVATE LIBRARY</p></div></div>
+<p id="stats" class="text-[10px] mt-3 opacity-60">0 books</p>
+<div class="mt-6 flex flex-col gap-2">
+<button onclick="goPage('all');toggleMenu()" class="text-left px-5 py-3 rounded-full bg-black text-white text-[12px]">All Books</button>
+<button onclick="goPage('reading');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[12px]">Currently Reading</button>
+<button onclick="goPage('fav');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[12px]">My Fav</button>
+<button onclick="goPage('finished');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[12px]">Finished</button>
+<button onclick="goPage('about');toggleMenu()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[12px]">About Me</button>
+<div class="h-[1px] bg-black/10 my-4"></div><button onclick="toggleDark()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[12px]">Dark / Light</button></div>
+<div class="mt-auto pt-6 border-t border-black/5 text-[9px] opacity-30">© 2026 Mi ning — Built for readers who collect sentences like secrets.</div>
+</div></div>
+<div class="px-6 md:px-10 pt-6 md:pt-8">
+<div id="page-all" class="page active">
+<div class="max-w-[680px] mb-10"><h1 class="serif text-[42px] md:text-[50px] leading-[0.9]">A room with no<br>checkout date.</h1><p class="text-[12px] opacity-60 mt-4 leading-relaxed max-w-[380px] italic">Some people underline. Some memorize. Some live inside a paragraph for weeks. This library is for them.</p></div>
+<div class="flex justify-between items-center mb-4"><p class="text-[10px] tracking-[0.2em] opacity-40">YOUR LIBRARY</p><div class="flex gap-2"><button onclick="scrollRow(-280)" class="w-7 h-7 rounded-full border text-[10px]">←</button><button onclick="scrollRow(280)" class="w-7 h-7 rounded-full border text-[10px]">→</button></div></div>
+<div id="bookRow" class="flex gap-5 overflow-x-auto no-scrollbar pb-6"></div>
+<div id="empty" class="border border-dashed border-black/10 rounded-[18px] p-10 text-center"><p class="serif text-[20px]">Your shelves are empty</p></div>
+<div class="footer"><span>© 2026 MI NING — PRIVATE VAULT</span><span>UNLIMITED • LOCAL • YOURS</span></div>
+</div>
+<div id="page-reading" class="page"><p class="text-[10px] tracking-[0.2em] opacity-40 mb-5">CURRENTLY READING</p><div id="readingRow" class="flex gap-5 overflow-x-auto no-scrollbar pb-6"></div><div class="footer"><span>© 2026 MI NING</span><span>HABIT, NOT HOBBY</span></div></div>
+<div id="page-fav" class="page"><p class="text-[10px] tracking-[0.2em] opacity-40 mb-5">MY FAV</p><div id="favRow" class="flex gap-5 flex-wrap"></div><div class="footer"><span>© 2026 MI NING</span><span>SAVED FOREVER</span></div></div>
+<div id="page-finished" class="page"><p class="text-[10px] tracking-[0.2em] opacity-40 mb-5">FINISHED</p><div id="finishedRow" class="flex gap-5 flex-wrap"></div><div class="footer"><span>© 2026 MI NING</span><span>DONE, BUT NEVER REALLY</span></div></div>
+<div id="page-about" class="page">
+<p class="text-[10px] tracking-[0.2em] opacity-40 mb-7">ABOUT THE CURATOR</p>
+<div class="flex flex-col md:flex-row gap-8 max-w-[860px]">
+<div class="flex flex-col gap-3"><div class="relative group"><img id="aboutAvatar" src="" class="w-[110px] h-[110px] rounded-full object-cover bg-gray-200"><label class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white text-[9px] tracking-widest opacity-0 group-hover:opacity-100 cursor-pointer transition">CHANGE<input type="file" id="avatarInput" accept="image/*" hidden></label></div><p class="text-[9px] opacity-40 tracking-widest">TAP TO CHANGE ICON</p></div>
+<div class="flex-1"><div class="flex items-center gap-3"><h2 id="aboutName" class="serif text-[32px]">Mi ning</h2><button onclick="editProfile()" class="text-[9px] border px-3 py-1 rounded-full tracking-widest opacity-60">EDIT</button></div>
+<p id="aboutBio" class="text-[12px] leading-relaxed mt-5 opacity-70 max-w-[520px]">I collect books that make me uncomfortable in the best way. Fiction that reads like a confession, essays that feel like a knife, stories for people who read 3 books at once and still want more.
 
-<div class="flex justify-between items-center px-6 md:px-8 py-5 border-b border-black/5" id="topBar">
-<div class="flex items-center gap-3 bg-[#F6F3EE] px-4 py-2.5 rounded-full w-[200px] md:w-[300px]" id="searchWrap">
-<span class="opacity-30 text-[11px] tracking-widest">SEARCH</span>
-<input id="searchInput" placeholder="Title..." class="bg-transparent outline-none text-[13px] w-full">
+This library is my private vault — no algorithms, no limits. Just books I love and want to keep forever.</p>
+<div class="mt-7"><p class="text-[10px] tracking-[0.2em] opacity-40 mb-2">GET IN TOUCH</p><div id="aboutLinks" class="flex flex-wrap gap-2"></div></div>
+</div></div>
+<div id="editBox" class="hidden mt-8 p-5 border border-black/10 rounded-[18px] max-w-[520px]"><input id="editName" placeholder="Your name" class="w-full px-4 py-2 rounded-full border text-[12px] mb-2"><textarea id="editBio" placeholder="About you..." class="w-full px-4 py-3 rounded-[14px] border text-[12px] h-[100px]"></textarea><textarea id="editLinks" placeholder="Instagram https://... Email mailto:..." class="w-full px-4 py-3 rounded-[14px] border text-[11px] h-[70px] mt-2"></textarea><div class="flex gap-2 mt-3"><button onclick="saveProfile()" class="px-5 py-2 bg-black text-white rounded-full text-[10px] tracking-widest">SAVE</button><button onclick="closeEdit()" class="px-5 py-2 border rounded-full text-[10px] tracking-widest">CANCEL</button></div></div>
+<div class="footer mt-14"><span>© 2026 MI NING</span><span>CURATED WITH OBSESSION</span></div>
 </div>
-<div class="flex items-center gap-3">
-<label class="px-5 py-2.5 bg-[#121212] text-white rounded-full text-[11px] cursor-pointer tracking-widest">UPLOAD<input type="file" id="pdfInput" accept=".pdf" multiple hidden></label>
-<button onclick="toggleMenu()" class="w-9 h-9 rounded-full bg-black/5 flex items-center justify-center text-[18px]">≡</button>
+</div></div>
+<div id="detailPage" class="fixed inset-0 z-[120] hidden bg-[#FFFEF8] overflow-y-auto"><div class="max-w-[1280px] mx-auto min-h-screen"><div class="flex justify-between items-center px-6 md:px-8 py-4 border-b border-black/5"><button onclick="closeDetail()" class="px-4 py-1.5 rounded-full border text-[10px] tracking-widest">CLOSE</button><p class="text-[10px] tracking-widest opacity-40">BOOK DETAIL</p><div class="w-[60px]"></div></div>
+<div class="px-6 md:px-14 py-8 md:py-12 flex flex-col md:flex-row gap-8 md:gap-12"><div id="detailCover" class="w-[190px] md:w-[300px] h-[270px] md:h-[440px] rounded-[10px] overflow-hidden book-shadow bg-[#eee] shrink-0 mx-auto md:mx-0"></div>
+<div class="flex-1"><h2 id="detailTitle" class="serif text-[28px] md:text-[40px] leading-[1.05]"></h2><p id="detailMeta" class="text-[10px] opacity-50 mt-3 tracking-widest"></p>
+<div class="mt-8 grid grid-cols-1 gap-2.5 max-w-[300px]">
+<button onclick="readNative()" class="w-full py-3.5 bg-black text-white rounded-full text-[11px] tracking-[0.14em]">READ</button>
+<div class="grid grid-cols-2 gap-2.5">
+<button onclick="setReading()" class="py-2.5 border border-black/10 rounded-full text-[10px] tracking-widest">CURRENTLY READING</button>
+<button onclick="toggleFavDetail()" id="detailFavBtn" class="py-2.5 border border-black/10 rounded-full text-[10px] tracking-widest">MY FAV</button>
 </div>
-</div>
-
-<div id="menuDrawer" class="fixed inset-0 z-[100] hidden">
-<div class="absolute inset-0 bg-black/40" onclick="toggleMenu()"></div>
-<div id="drawerPanel" class="absolute right-0 top-0 h-full w-[320px] bg-[#FFFEF8] p-7 flex flex-col">
-<button onclick="toggleMenu()" class="self-end w-8 h-8 rounded-full border flex items-center justify-center text-[11px]">CLOSE</button>
-<div class="mt-6 flex items-center gap-3">
-<img id="drawerAvatar" src="https://i.pravatar.cc/150?img=33" class="w-10 h-10 rounded-full object-cover">
-<div><p class="font-medium text-[13px]" id="drawerName">Mi ning</p><p class="text-[10px] opacity-50 tracking-widest">PRIVATE LIBRARY</p></div>
-</div>
-<p id="stats" class="text-[11px] mt-4 opacity-60">0 books</p>
-<div class="mt-8 flex flex-col gap-2">
-<button onclick="goPage('all');toggleMenu()" id="nav-all" class="text-left px-5 py-3 rounded-full bg-black text-white text-[13px]">All Books</button>
-<button onclick="goPage('reading');toggleMenu()" id="nav-reading" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Currently Reading</button>
-<button onclick="goPage('fav');toggleMenu()" id="nav-fav" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">My Fav</button>
-<button onclick="goPage('finished');toggleMenu()" id="nav-finished" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Finished</button>
-<button onclick="goPage('about');toggleMenu()" id="nav-about" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">About Me</button>
-<div class="h-[1px] bg-black/10 my-6"></div>
-<button onclick="toggleDark()" class="text-left px-5 py-3 rounded-full hover:bg-black/5 text-[13px]">Dark / Light</button>
-</div>
-<p class="mt-auto text-[10px] opacity-40">Unlimited storage • Swipe to browse</p>
+<div class="grid grid-cols-2 gap-2.5">
+<button onclick="markFinishedDetail()" class="py-2.5 border border-black/10 rounded-full text-[10px] tracking-widest">FINISHED</button>
+<button onclick="deleteDetail()" class="py-2.5 border border-black/10 rounded-full text-[10px] tracking-widest opacity-60">DELETE</button>
 </div>
 </div>
-
-<div class="px-6 md:px-10 pt-8 md:pt-10" id="contentArea">
-
-<!-- HEADER WITH CURATOR -->
-<div class="flex flex-col md:flex-row justify-between gap-10" id="mainHeader">
-<div class="md:w-[52%]">
-<h1 class="serif text-[46px] leading-[0.9]">Keep the story<br>going..</h1>
-<p class="text-[13px] opacity-60 mt-5 leading-relaxed max-w-[360px] italic">For the disgustingly well-educated — those who read like it is a personality disorder and think like it is an art form.</p>
-</div>
-<div class="md:w-[32%] flex gap-3 items-start">
-<img id="mainAvatar" src="https://i.pravatar.cc/150?img=33" class="w-12 h-12 rounded-full object-cover">
-<div><p class="font-medium text-[14px]" id="mainName">Mi ning</p><p class="text-[10px] opacity-50 tracking-widest mt-1">CURATOR</p><p class="text-[11px] opacity-60 mt-2 leading-relaxed" id="mainBioShort">A private archive for books that make you dangerously well-read.</p></div>
-</div>
-</div>
-
-<!-- ALL BOOKS -->
-<div id="page-all" class="page active mt-12">
-<div class="flex justify-between items-center mb-5"><p class="text-[11px] tracking-[0.2em] opacity-40">YOUR LIBRARY</p><div class="flex gap-2"><button onclick="scrollRow(-280)" class="w-8 h-8 rounded-full border text-xs">←</button><button onclick="scrollRow(280)" class="w-8 h-8 rounded-full border text-xs">→</button></div></div>
-<div id="bookRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-8"></div>
-<div id="empty" class="border border-dashed border-black/15 rounded-[20px] p-12 text-center"><p class="serif text-[22px]">Your shelves are empty</p></div>
-</div>
-
-<div id="page-reading" class="page mt-12"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6">CURRENTLY READING</p><div id="readingRow" class="flex gap-6 overflow-x-auto no-scrollbar pb-6"></div></div>
-<div id="page-fav" class="page mt-12"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6">MY FAV</p><div id="favRow" class="flex gap-6 flex-wrap"></div></div>
-<div id="page-finished" class="page mt-12"><p class="text-[11px] tracking-[0.2em] opacity-40 mb-6">FINISHED</p><div id="finishedRow" class="flex gap-6 flex-wrap"></div></div>
-
-<!-- ABOUT ME PAGE -->
-<div id="page-about" class="page mt-12">
-<p class="text-[11px] tracking-[0.2em] opacity-40 mb-8">ABOUT THE CURATOR</p>
-<div class="flex flex-col md:flex-row gap-8 md:gap-12 max-w-[900px]">
-<div class="flex flex-col items-start gap-4">
-<div class="relative group">
-<img id="aboutAvatar" src="https://i.pravatar.cc/300?img=33" class="w-[120px] h-[120px] rounded-full object-cover">
-<label class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white text-[10px] tracking-widest opacity-0 group-hover:opacity-100 cursor-pointer transition">CHANGE<input type="file" id="avatarInput" accept="image/*" hidden></label>
-</div>
-<p class="text-[10px] opacity-40 tracking-widest">TAP TO CHANGE ICON</p>
-</div>
-<div class="flex-1">
-<div class="flex items-center gap-3">
-<h2 id="aboutName" class="serif text-[36px]">Mi ning</h2>
-<button onclick="editProfile()" class="text-[10px] border px-3 py-1 rounded-full tracking-widest opacity-60">EDIT</button>
-</div>
-<p id="aboutBio" class="text-[13px] leading-relaxed mt-6 opacity-70 max-w-[560px]">
-I collect books that make me uncomfortable in the best way. Fiction that reads like a confession, essays that feel like a knife, stories for people who read 3 books at once and still want more.
-<br><br>
-This library is my private vault — no algorithms, no limits. Just books I love and want to keep forever. If you found this, you are disgustingly well-educated too. Welcome.
-</p>
-<div class="mt-8">
-<p class="text-[11px] tracking-[0.2em] opacity-40 mb-3">GET IN TOUCH</p>
-<div id="aboutLinks" class="flex flex-wrap gap-2"></div>
-</div>
-<p class="text-[10px] opacity-30 mt-16 tracking-widest">BUILT FOR READERS WHO READ LIKE IT IS A PERSONALITY DISORDER.</p>
-</div>
-</div>
-
-<!-- EDIT MODAL -->
-<div id="editBox" class="hidden mt-10 p-6 border border-black/10 rounded-[20px] max-w-[560px]">
-<p class="text-[11px] tracking-widest opacity-40 mb-4">EDIT PROFILE</p>
-<input id="editName" placeholder="Your name" class="w-full px-4 py-2.5 rounded-full border border-black/10 text-[13px] mb-3 outline-none">
-<textarea id="editBio" placeholder="About you..." class="w-full px-4 py-3 rounded-[16px] border border-black/10 text-[13px] h-[120px] outline-none"></textarea>
-<div class="mt-3">
-<p class="text-[11px] opacity-50 mb-2">Links - one per line like: Instagram https://...</p>
-<textarea id="editLinks" placeholder="Instagram https://instagram.com/you&#10;Email mailto:you@email.com" class="w-full px-4 py-3 rounded-[16px] border border-black/10 text-[12px] h-[80px] outline-none"></textarea>
-</div>
-<div class="flex gap-2 mt-4"><button onclick="saveProfile()" class="px-6 py-2.5 bg-black text-white rounded-full text-[11px] tracking-widest">SAVE</button><button onclick="closeEdit()" class="px-6 py-2.5 border rounded-full text-[11px] tracking-widest">CANCEL</button></div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- BOOK DETAIL -->
-<div id="detailPage" class="fixed inset-0 z-[120] hidden bg-[#FFFEF8] overflow-y-auto">
-<div class="max-w-[1280px] mx-auto min-h-screen">
-<div class="flex justify-between items-center px-6 md:px-8 py-5 border-b border-black/5"><button onclick="closeDetail()" class="px-5 py-2 rounded-full border text-[11px] tracking-widest">CLOSE</button><p class="text-[11px] tracking-widest opacity-40">BOOK DETAIL</p><div class="w-[70px]"></div></div>
-<div class="px-6 md:px-16 py-10 md:py-16 flex flex-col md:flex-row gap-10">
-<div id="detailCover" class="w-[200px] md:w-[320px] h-[300px] md:h-[480px] rounded-[12px] overflow-hidden book-shadow bg-[#eee] shrink-0 mx-auto md:mx-0"></div>
-<div class="flex-1"><h2 id="detailTitle" class="serif text-[32px] md:text-[44px] leading-[1.05]"></h2><p id="detailMeta" class="text-[11px] opacity-50 mt-4 tracking-widest"></p><div class="mt-10 grid grid-cols-1 gap-3 max-w-[320px]"><button onclick="readNative()" class="w-full py-4 bg-black text-white rounded-full text-[12px] tracking-[0.15em]">READ</button><div class="grid grid-cols-2 gap-3"><button onclick="toggleFavDetail()" id="detailFavBtn" class="py-3 border border-black/10 rounded-full text-[11px] tracking-widest">MY FAV</button><button onclick="markFinishedDetail()" class="py-3 border border-black/10 rounded-full text-[11px] tracking-widest">FINISHED</button></div><button onclick="deleteDetail()" class="py-3 text-[11px] opacity-40 tracking-widest mt-2">DELETE BOOK</button></div></div>
-</div>
-</div>
-</div>
-
+<div class="footer mt-10"><span>© 2026 MI NING — VAULT</span><span>LOCAL • PRIVATE</span></div>
+</div></div></div></div>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-let db, books=[], selectedId=null, isDark=false, currentBlobUrl=null, profile={name:'Mi ning', bio:`I collect books that make me uncomfortable in the best way. Fiction that reads like a confession, essays that feel like a knife, stories for people who read 3 books at once and still want more.\n\nThis library is my private vault — no algorithms, no limits. Just books I love and want to keep forever. If you found this, you are disgustingly well-educated too. Welcome.`, links:[{label:'Instagram', url:'https://instagram.com'},{label:'Email', url:'mailto:hello@mining.com'}], avatar:'https://i.pravatar.cc/300?img=33'};
-
-function openDB(){return new Promise(res=>{const r=indexedDB.open('mi-ning-final-v4',2); r.onupgradeneeded=e=>{const d=e.target.result; if(!d.objectStoreNames.contains('books')) d.createObjectStore('books',{keyPath:'id'}); if(!d.objectStoreNames.contains('profile')) d.createObjectStore('profile',{keyPath:'id'});}; r.onsuccess=e=>{db=e.target.result;res();};});}
-function saveBook(b){return new Promise(res=>{const tx=db.transaction('books','readwrite'); tx.objectStore('books').put(b); tx.oncomplete=res;});}
-function loadBooks(){return new Promise(res=>{const tx=db.transaction('books','readonly'); const req=tx.objectStore('books').getAll(); req.onsuccess=()=>{books=req.result.reverse(); res();};});}
-function deleteDB(id){return new Promise(res=>{const tx=db.transaction('books','readwrite'); tx.objectStore('books').delete(id); tx.oncomplete=res;});}
-function saveProfileDB(){return new Promise(res=>{const tx=db.transaction('profile','readwrite'); tx.objectStore('profile').put({...profile, id:'main'}); tx.oncomplete=res;});}
-function loadProfile(){return new Promise(res=>{const tx=db.transaction('profile','readonly'); const req=tx.objectStore('profile').get('main'); req.onsuccess=()=>{if(req.result){profile=req.result;} res();};});}
-
-async function genCover(file){ try{ const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument(buf.slice(0)).promise; const page=await pdf.getPage(1); const vp=page.getViewport({scale:0.5}); const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise; return c.toDataURL('image/jpeg',0.55);}catch{return null;} }
-
-document.getElementById('pdfInput').addEventListener('change', async e=>{
- const files=Array.from(e.target.files); if(!files.length) return;
- for(const f of files){ const cover=await genCover(f); const buf=await f.arrayBuffer(); const clean=f.name.replace('.pdf','').replace(/_OceanofPDF\.com_/gi,'').replace(/_/g,' ').replace(/-/g,' ').trim(); await saveBook({id:Date.now()+'_'+Math.random().toString(36).slice(2), title:clean, cover, data:buf, size:f.size, status:'all', fav:false}); }
- await loadBooks(); renderAll();
-});
-
-document.getElementById('avatarInput').addEventListener('change', e=>{
- const f=e.target.files[0]; if(!f) return;
- const reader=new FileReader(); reader.onload=async ev=>{ profile.avatar=ev.target.result; await saveProfileDB(); renderProfile(); }; reader.readAsDataURL(f);
-});
-
-function renderAll(){
- const q=(document.getElementById('searchInput').value||'').toLowerCase();
- const filtered=books.filter(b=> b.title.toLowerCase().includes(q));
- const allRow=document.getElementById('bookRow'); allRow.innerHTML='';
- document.getElementById('empty').style.display=filtered.length?'none':'block';
- document.getElementById('stats').innerText=`${books.length} books — Unlimited`;
- filtered.forEach(b=> allRow.innerHTML+=card(b));
- document.getElementById('readingRow').innerHTML=books.filter(b=> b.status==='reading').map(card).join('');
- document.getElementById('favRow').innerHTML=books.filter(b=> b.fav).map(card).join('');
- document.getElementById('finishedRow').innerHTML=books.filter(b=> b.status==='finished').map(card).join('');
-}
-
-function card(b){
- const cover=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-[#121212] p-4 flex flex-col justify-between"><span class="text-[8px] bg-white text-black px-2 py-1 rounded-full w-fit tracking-widest">PDF</span><p class="text-white text-[13px] leading-tight">${b.title.slice(0,50)}</p></div>`;
- return `<div class="min-w-[160px]"><div onclick="openDetail('${b.id}')" class="w-[160px] h-[230px] rounded-[8px] overflow-hidden book-shadow cursor-pointer bg-white">${cover}</div><p class="text-[12px] font-medium truncate w-[160px] mt-3">${b.title}</p><p class="text-[10px] opacity-40 mt-0.5">${(b.size/1024/1024).toFixed(1)} MB</p></div>`;
-}
-
-function renderProfile(){
- document.getElementById('mainAvatar').src=profile.avatar; document.getElementById('drawerAvatar').src=profile.avatar; document.getElementById('aboutAvatar').src=profile.avatar;
- document.getElementById('mainName').innerText=profile.name; document.getElementById('drawerName').innerText=profile.name; document.getElementById('aboutName').innerText=profile.name;
- document.getElementById('aboutBio').innerText=profile.bio; document.getElementById('mainBioShort').innerText=profile.bio.split('\n')[0].slice(0,80);
- const linksDiv=document.getElementById('aboutLinks'); linksDiv.innerHTML='';
- (profile.links||[]).forEach(l=>{ linksDiv.innerHTML+=`<a href="${l.url}" target="_blank" class="px-4 py-2 border border-black/10 rounded-full text-[11px] tracking-widest hover:bg-black hover:text-white transition">${l.label}</a>`; });
-}
-
-function scrollRow(x){ document.getElementById('bookRow').scrollBy({left:x, behavior:'smooth'}); }
-function goPage(p){ document.querySelectorAll('.page').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); renderAll(); }
-function toggleMenu(){ document.getElementById('menuDrawer').classList.toggle('hidden'); }
-function toggleDark(){
- isDark=!isDark;
- document.getElementById('appCard').classList.toggle('dark-main', isDark);
- document.getElementById('drawerPanel').classList.toggle('dark-main', isDark);
- document.getElementById('detailPage').classList.toggle('dark-main', isDark);
- document.getElementById('searchWrap').classList.toggle('dark-sub', isDark);
- document.body.style.background=isDark?'#000':'#CFCAC1';
-}
-
-function openDetail(id){ selectedId=id; const b=books.find(x=>x.id===id); document.getElementById('detailTitle').innerText=b.title; document.getElementById('detailMeta').innerText=`${(b.size/1024/1024).toFixed(1)} MB • PDF`; document.getElementById('detailCover').innerHTML=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-black text-white p-6 flex items-end"><p>${b.title}</p></div>`; document.getElementById('detailFavBtn').innerText=b.fav?'REMOVE FROM FAV':'MY FAV'; document.getElementById('detailPage').classList.remove('hidden'); b.status='reading'; saveBook(b); }
-function closeDetail(){ document.getElementById('detailPage').classList.add('hidden'); renderAll(); }
-function readNative(){ const b=books.find(x=>x.id===selectedId); const blob=new Blob([b.data],{type:'application/pdf'}); if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl); currentBlobUrl=URL.createObjectURL(blob); window.open(currentBlobUrl, '_blank'); }
-async function toggleFavDetail(){ const b=books.find(x=>x.id===selectedId); b.fav=!b.fav; await saveBook(b); openDetail(selectedId); await loadBooks(); renderAll(); }
-async function markFinishedDetail(){ const b=books.find(x=>x.id===selectedId); b.status='finished'; await saveBook(b); closeDetail(); goPage('finished'); await loadBooks(); renderAll(); }
-async function deleteDetail(){ if(!confirm('Delete this book?')) return; await deleteDB(selectedId); closeDetail(); await loadBooks(); renderAll(); }
-
-function editProfile(){ document.getElementById('editBox').classList.remove('hidden'); document.getElementById('editName').value=profile.name; document.getElementById('editBio').value=profile.bio; document.getElementById('editLinks').value=(profile.links||[]).map(l=>`${l.label} ${l.url}`).join('\n'); }
-function closeEdit(){ document.getElementById('editBox').classList.add('hidden'); }
-async function saveProfile(){
- profile.name=document.getElementById('editName').value||'Mi ning'; profile.bio=document.getElementById('editBio').value;
- const lines=document.getElementById('editLinks').value.split('\n').filter(Boolean);
- profile.links=lines.map(line=>{ const parts=line.split(' '); const url=parts.pop(); const label=parts.join(' ')||'Link'; return {label, url}; });
- await saveProfileDB(); renderProfile(); closeEdit();
-}
-
-document.getElementById('searchInput').addEventListener('input', renderAll);
-(async()=>{ await openDB(); await loadBooks(); await loadProfile(); renderAll(); renderProfile(); })();
-</script>
-</body>
-</html>
+let db,books=[],selectedId=null,isDark=false,currentBlobUrl=null;
+let profile={name:'Mi ning',bio:`I collect books that make me uncomfortable in the best way. Fiction that reads like a confession, essays that feel like a knife, stories for people who read 3 books at once and still want more.\n\nThis library is my private vault — no algorithms, no limits. Just books I love and want to keep forever.`,links:[{label:'Instagram',url:'https://instagram.com'},{label:'Email',url:'mailto:hello@mining.com'}],avatar:""};
+function openDB(){return new Promise(r=>{const q=indexedDB.open('mi-ning-final-v8',2);q.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('books'))d.createObjectStore('books',{keyPath:'id'});if(!d.objectStoreNames.contains('profile'))d.createObjectStore('profile',{keyPath:'id'});};q.onsuccess=e=>{db=e.target.result;r();};});}
+function saveBook(b){return new Promise(r=>{const t=db.transaction('books','readwrite');t.objectStore('books').put(b);t.oncomplete=r;});}
+function loadBooks(){return new Promise(r=>{const t=db.transaction('books','readonly');const q=t.objectStore('books').getAll();q.onsuccess=()=>{books=q.result.reverse();r();};});}
+function deleteDB(id){return new Promise(r=>{const t=db.transaction('books','readwrite');t.objectStore('books').delete(id);t.oncomplete=r;});}
+function saveProfileDB(){return new Promise(r=>{const t=db.transaction('profile','readwrite');t.objectStore('profile').put(Object.assign({},profile,{id:'main'}));t.oncomplete=r;});}
+function loadProfile(){return new Promise(r=>{const t=db.transaction('profile','readonly');const q=t.objectStore('profile').get('main');q.onsuccess=()=>{if(q.result)profile=q.result;if(!profile.avatar){profile.avatar="https://i.imgur.com/YOUR_PANDA.png"}r();};});}
+async function genCover(f){try{const b=await f.arrayBuffer();const pdf=await pdfjsLib.getDocument(b.slice(0)).promise;const p=await pdf.getPage(1);const v=p.getViewport({scale:.5});const c=document.createElement('canvas');c.width=v.width;c.height=v.height;await p.render({canvasContext:c.getContext('2d'),viewport:v}).promise;return c.toDataURL('image/jpeg',.55);}catch{return null;}}
+document.getElementById('pdfInput').addEventListener('change',async e=>{for(const f of Array.from(e.target.files)){const cover=await genCover(f);const buf=await f.arrayBuffer();const clean=f.name.replace('.pdf','').replace(/_OceanofPDF\.com_/gi,'').replace(/_/g,' ').replace(/-/g,' ').trim();await saveBook({id:Date.now()+'_'+Math.random().toString(36).slice(2),title:clean,cover,data:buf,size:f.size,status:'all',fav:false});}await loadBooks();renderAll();});
+document.getElementById('avatarInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async ev=>{profile.avatar=ev.target.result;await saveProfileDB();renderProfile();};r.readAsDataURL(f);});
+function renderAll(){const q=(document.getElementById('searchInput').value||'').toLowerCase();const filtered=books.filter(b=>b.title.toLowerCase().includes(q));document.getElementById('bookRow').innerHTML=filtered.map(card).join('');document.getElementById('empty').style.display=filtered.length?'none':'block';document.getElementById('stats').innerText=books.length+' books';document.getElementById('readingRow').innerHTML=books.filter(b=>b.status==='reading').map(card).join('');document.getElementById('favRow').innerHTML=books.filter(b=>b.fav).map(card).join('');document.getElementById('finishedRow').innerHTML=books.filter(b=>b.status==='finished').map(card).join('');}
+function card(b){const cover=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-black text-white p-4 flex items-end"><p class="text-[12px]">${b.title.slice(0,50)}</p></div>`;return `<div class="min-w-[150px]"><div onclick="openDetail('${b.id}')" class="w-[150px] h-[215px] rounded-[8px] overflow-hidden book-shadow bg-white cursor-pointer">${cover}</div><p class="text-[11px] font-medium truncate w-[150px] mt-2">${b.title}</p><p class="text-[9px] opacity-40">${(b.size/1024/1024).toFixed(1)} MB</p></div>`;}
+function renderProfile(){document.getElementById('drawerAvatar').src=profile.avatar;document.getElementById('aboutAvatar').src=profile.avatar;document.getElementById('drawerName').innerText=profile.name;document.getElementById('aboutName').innerText=profile.name;document.getElementById('aboutBio').innerText=profile.bio;const d=document.getElementById('aboutLinks');d.innerHTML='';(profile.links||[]).forEach(l=>{d.innerHTML+=`<a href="${l.url}" target="_blank" class="px-3 py-1.5 border border-black/10 rounded-full text-[10px] tracking-widest hover:bg-black hover:text-white transition">${l.label}</a>`;});}
+function scrollRow(x){document.getElementById('bookRow').scrollBy({left:x,behavior:'smooth'});}
+function goPage(p){document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');renderAll();}
+function toggleMenu(){document.getElementById('menuDrawer').classList.toggle('hidden');}
+function toggleDark(){isDark=!isDark;document.getElementById('appCard').classList.toggle('dark-main',isDark);document.getElementById('drawerPanel').classList.toggle('dark-main',isDark);document.getElementById('detailPage').classList.toggle('dark-main',isDark);document.body.style.background=isDark?'#000':'#CFCAC1';}
+function openDetail(id){selectedId=id;const b=books.find(x=>x.id===id);document.getElementById('detailTitle').innerText=b.title;document.getElementById('detailMeta').innerText=(b.size/1024/1024).toFixed(1)+' MB • PDF';document.getElementById('detailCover').innerHTML=b.cover?`<img src="${b.cover}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-black text-white p-5 flex items-end">${b.title}</div>`;document.getElementById('detailFavBtn').innerText=b.fav?'REMOVE FROM FAV':'MY FAV';document.getElementById('detailPage').classList.remove('hidden');}
+function closeDetail(){document.getElementById('detailPage').classList.add('hidden');renderAll();}
+function readNative(){const b=books.find(x=>x.id===selectedId);const blob=new Blob([b.data],{type:'application/pdf'});if(currentBlobUrl)URL.revokeObjectURL(currentBlobUrl);currentBlobUrl=URL.createObjectURL(blob);window.open(currentBlobUrl,'_blank');}
+async function setReading(){const b=books.find(x=>x.id===selectedId);b.status='reading';await saveBook(b);closeDetail();goPage('reading');await loadBooks();renderAll();}
+async function toggleFavDetail(){const b=books.find(x=>x.id===selectedId);b.fav=!b.fav;await saveBook(b);openDetail(selectedId);await loadBooks();renderAll();}
+async function markFinishedDetail(){const b=books.find(x=>x.id===selectedId);b.status='finished';await saveBook(b);closeDetail();goPage('finished');await loadBooks();renderAll();}
+async function deleteDetail(){if(!confirm('Delete this book?'))return;await deleteDB(selectedId);closeDetail();await loadBooks();renderAll();}
+function editProfile(){document.getElementById('editBox').classList.remove('hidden');document.getElementById('editName').value=profile.name;document.getElementById('editBio').value=profile.bio;document.getElementById('editLinks').value=(profile.links||[]).map(l=>l.label+' '+l.url).join('\n');}
+function closeEdit(){document.getElementById('editBox').classList.add('hidden');}
+async function saveProfile(){profile.name=document.getElementById('editName').value||'Mi ning';profile.bio=document.getElementById('editBio').value;const lines=document.getElementById('editLinks').value.split('\n').filter(Boolean);profile.links=lines.map(l=>{const p=l.split(' ');const url=p.pop();const label=p.join(' ')||'Link';return{label,url};});await saveProfileDB();renderProfile();closeEdit();}
+document.getElementById('searchInput').addEventListener('input',renderAll);
+(async()=>{await openDB();await loadBooks();await loadProfile();renderAll();renderProfile();})();
+</script></body></html>
