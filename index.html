@@ -195,7 +195,7 @@ async function autoFetchGitHubBooks() {
 
       for (let book of catalog) {
         try {
-          const pdf = await pdfjsLib.getDocument(book.file).promise;
+          const pdf = await pdfjsLib.getDocument(encodeURI(book.file)).promise;
           const page = await pdf.getPage(1);
           const vp = page.getViewport({ scale: 0.6 });
           const c = document.createElement('canvas');
@@ -271,7 +271,8 @@ function closeDetail() { document.getElementById('detailPage').classList.add('hi
 function openPdfFile() {
   const b = catalog.find(x => x.id === selectedId);
   if (b) {
-    const pdfUrl = window.location.origin + window.location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '') + '/' + b.file;
+    const safeFilePath = encodeURI(b.file);
+    const pdfUrl = window.location.origin + window.location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '') + '/' + safeFilePath;
     window.open(pdfUrl, '_blank');
   }
 }
