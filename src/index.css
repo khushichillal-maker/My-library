@@ -1,0 +1,11 @@
+@import "tailwindcss";
+:root {
+  --background: oklch(0.994 0.014 100.5);
+  --foreground: oklch(0.24 0.02 60);
+  --card: oklch(1 0.004 100);
+  --primary: oklch(0.36 0.05 45);
+  --primary-foreground: oklch(0.985 0.012 100);
+  --border: oklch(0.9 0.018 90);
+}
+body { background: var(--background); color: var(--foreground); font-family: Inter, sans-serif; }
+h1, h2 { font-family: "Instrument Serif", Georgia, serif; }
